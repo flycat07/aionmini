@@ -1,6 +1,6 @@
 package com.reikop.aionmini.middle.service.impl;
 
-import com.reikop.aionmini.middle.service.MainPageService;
+import com.reikop.aionmini.middle.service.AionService;
 import com.reikop.aionmini.work.JSONConnections;
 import com.reikop.aionmini.work.JSONConnector;
 import com.reikop.aionmini.work.model.User;
@@ -8,7 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class MainPageServiceImpl implements MainPageService {
+public class AionServiceImpl implements AionService {
 
     @Autowired
     private JSONConnector connector;

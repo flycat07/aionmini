@@ -1,5 +1,6 @@
 package com.reikop.aionmini.work;
 
+import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
@@ -29,9 +30,19 @@ public class JSONConnector {
             uri = String.format(uri, params);
         }
         HttpGet request = new HttpGet(uri);
+        request.setHeader("Origin", "https://aion.plaync.com");
+        request.setHeader("Referer", "https://aion.plaync.com/");
+        request.setHeader("Host", "api-aion.plaync.com");
+        request.setHeader("Sec-Fetch-Dest", "empty");
+        request.setHeader("Sec-Fetch-Mode", "cors");
+        request.setHeader("Sec-Fetch-Site", "same-site");
+        request.setHeader("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 11_0_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.198 Safari/537.36");
+
         CloseableHttpClient client = HttpClientBuilder.create().build();
         try {
-            InputStream content = client.execute(request).getEntity().getContent();
+            CloseableHttpResponse response = client.execute(request);
+            System.out.println(response);
+            InputStream content = response.getEntity().getContent();
             ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
             FileCopyUtils.copy(content, byteArrayOutputStream);
             return new String(byteArrayOutputStream.toByteArray(), StandardCharsets.UTF_8);

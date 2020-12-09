@@ -2,7 +2,7 @@ package com.reikop.aionmini.middle.service;
 
 import com.reikop.aionmini.work.model.User;
 
-public interface MainPageService {
+public interface AionService {
 
     String suggestCharNames(String keyword);
 
