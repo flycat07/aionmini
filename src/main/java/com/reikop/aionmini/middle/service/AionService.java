@@ -1,16 +1,15 @@
 package com.reikop.aionmini.middle.service;
 
+import com.reikop.aionmini.work.model.Servers;
+import com.reikop.aionmini.work.model.Status;
 import com.reikop.aionmini.work.model.User;
+
+import java.util.List;
 
 public interface AionService {
 
-    String suggestCharNames(String keyword);
+    List<User> suggestCharNames(String keyword, Servers server);
 
-    String getPVPStatus(User user);
+    String getStatus(Status status);
 
-    String getCHARACTERStatus(User user);
-
-    String getGLORYPOINTStatus(User user);
-
-    String getINFINITYStatus(User user);
 }

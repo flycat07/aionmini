@@ -1,12 +1,17 @@
-package com.reikop.aionmini.controller;
+package com.reikop.aionmini.common.controller;
 
 import com.reikop.aionmini.middle.service.AionService;
+import com.reikop.aionmini.work.model.Servers;
+import com.reikop.aionmini.work.model.Status;
 import com.reikop.aionmini.work.model.User;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
+import java.util.List;
+
 @RequestMapping("/api")
 @RestController
 public class DataController {
@@ -15,26 +20,18 @@ public class DataController {
     private AionService aionService;
 
     @RequestMapping("/suggest")
-    private String suggest(String keyword){
-        return aionService.suggestCharNames(keyword);
+    private List<User> suggest(String keyword, @RequestParam(required = false) Servers server) {
+        return aionService.suggestCharNames(keyword, server);
     }
 
     @RequestMapping("/character/{server}/{id}")
     private String characterInfo(@PathVariable("server") int server,
                                  @PathVariable("id") int id){
-        User user = new User();
-        user.setServer(server);
-        user.setUserid(id);
-        String characterStatus = aionService.getCHARACTERStatus(user);
-        String glorypointStatus = aionService.getGLORYPOINTStatus(user);
-        String infinityStatus = aionService.getINFINITYStatus(user);
-        String pvpStatus = aionService.getPVPStatus(user);
+        Status status = new Status();
+        status.setServer(Servers.getServerValue(server));
+        status.setUserid(id);
 
-        return String.format("{\"char\": %s, \"glory\": %s, \"infinity\": %s, \"pvp\": %s}"
-        , characterStatus
-        , glorypointStatus
-        , infinityStatus
-        , pvpStatus);
+        return aionService.getStatus(status);
     }
 
 }
