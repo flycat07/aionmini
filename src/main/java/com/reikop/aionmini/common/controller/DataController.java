@@ -25,10 +25,10 @@ public class DataController {
     }
 
     @RequestMapping("/character/{server}/{id}")
-    private String characterInfo(@PathVariable("server") int server,
+    private String characterInfo(@PathVariable("server") Servers server,
                                  @PathVariable("id") int id){
         Status status = new Status();
-        status.setServer(Servers.getServerValue(server));
+        status.setServer(server);
         status.setUserid(id);
 
         return aionService.getStatus(status);

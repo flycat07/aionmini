@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 @Service
@@ -37,21 +38,27 @@ public class AionServiceImpl implements AionService {
         JSONArray suggest = connector.suggest(JSONConnections.SUGGEST_CHARS, keyword, server);
         List<User> userArrayList = new ArrayList<>();
         for (Object o : suggest) {
-            User user = new User();
             JSONObject object = (JSONObject) o;
-            user.setUserid(object.getInt("charId"));
-            user.setServer(Servers.getServerValue(object.getInt("serverId")));
-            String username = object.getString("charName");
-            user.setCharname(username.replaceAll("<(/)?([a-zA-Z]*)(\\s[a-zA-Z]*=[^>]*)?(\\s)*(/)?>", ""));
-            userArrayList.add(user);
-            userService.putUser(user);
+            if(object.getInt("serverId") > 10){
+                User user = new User();
+                user.setUserid(object.getInt("charId"));
+                user.setLevel(object.getInt("level"));
+                user.setServer(Servers.getServerValue(object.getInt("serverId")));
+                user.setClassName(object.getString("className"));
+                user.setRaceName(object.getString("raceName"));
+                String username = object.getString("charName");
+                user.setCharname(username.replaceAll("<(/)?([a-zA-Z]*)(\\s[a-zA-Z]*=[^>]*)?(\\s)*(/)?>", ""));
+                userArrayList.add(user);
+                userService.putUser(user);
+            }
         }
+        userArrayList.sort(Comparator.comparingInt(User::getLevel).reversed());
         return userArrayList;
     }
 
     @Override
     public String getStatus(Status status) {
-        String call = connector.status(JSONConnections.STATUS, status.getServer(), status.getUserid());
+        String call = connector.status(JSONConnections.STATUS, status.getServer().getServer(), status.getUserid());
         status.setStatus(call);
         statusService.putData(status);
         return call;

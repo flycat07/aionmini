@@ -5,7 +5,6 @@ import javax.persistence.*;
 
 @Entity(name = "user")
 @Table(
-        name="userkey",
         uniqueConstraints={
                 @UniqueConstraint(
                         columnNames={"server","userid"}
@@ -18,7 +17,26 @@ public class User {
     private Integer id;
     private Servers server;
     private int userid;
+    private int level;
+    private String raceName;
+    private String className;
     private String charname;
+
+    public String getRaceName() {
+        return raceName;
+    }
+
+    public void setRaceName(String raceName) {
+        this.raceName = raceName;
+    }
+
+    public String getClassName() {
+        return className;
+    }
+
+    public void setClassName(String className) {
+        this.className = className;
+    }
 
     public Integer getId() {
         return id;
@@ -50,5 +68,13 @@ public class User {
 
     public void setCharname(String charname) {
         this.charname = charname;
+    }
+
+    public int getLevel() {
+        return level;
+    }
+
+    public void setLevel(int level) {
+        this.level = level;
     }
 }
