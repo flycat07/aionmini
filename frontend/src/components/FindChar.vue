@@ -4,14 +4,18 @@
     <v-card-text>
       <v-row>
         <v-col cols="12">
+          <v-btn class="mr-3" @click="clearHistory" x-small color="red" dark><v-icon left x-small>mdi-sticker-remove-outline</v-icon>전체 삭제</v-btn>
           <v-btn class="mr-1" @click="selectedChar = h" v-for="(h, index) in history" v-text="h.charname" :key="index" x-small outlined></v-btn>
         </v-col>
         <v-col cols="4">
-          <v-select v-model="selectedServer" flat outlined :items="servers" item-text="name" item-value="type" label="서버">
+          <v-select v-model="selectedServer" flat outlined
+                    clearable
+                    :items="servers" item-text="name" item-value="type" label="서버">
           </v-select>
         </v-col>
         <v-col cols="8">
           <v-autocomplete
+              ref="suggest"
               outlined
               flat
               label="검색"
@@ -23,6 +27,12 @@
               :items="suggest"
               :search-input.sync="keyword"
               return-object
+              clear-on-select
+              open-on-clear
+              clearable
+              :loading="suggestLoading"
+              @blur="selectedChar={}"
+              @keydown.enter="autoSelect"
           >
             <template v-slot:item="{ item }">
               {{item.charname}} / {{item.server}} / Lv.{{item.level}} / {{item.raceName}} / {{item.className}}
@@ -31,8 +41,9 @@
           </v-autocomplete>
         </v-col>
 
-      </v-row>
 
+      </v-row>
+      {{selectedChar}}
       <v-divider />
 
       <v-alert v-if="showServerError">가디언, 아칸서버는 지원되지 않습니다.</v-alert>
@@ -156,13 +167,18 @@ export default {
     }
   },
   watch: {
-    keyword () {
-      this.search();
+    keyword(){
+      if(this.keyword !== ""){
+        this.search();
+      }
     },
+
     selectedChar () {
-      this.addThisChar();
-      this.findChar();
-      this.loadHistory();
+      if(this.selectedChar.userid){
+        this.addThisChar();
+        this.findChar();
+        this.loadHistory();
+      }
     },
   },
   data () {
@@ -196,6 +212,7 @@ export default {
       hour: 0,
       time: "",
       selectedChar: {},
+      suggestLoading: false,
       showServerError: false,
       char: {},
       result: {},
@@ -232,9 +249,15 @@ export default {
   },
   methods: {
     async search() {
+      console.info(this.keyword)
+      this.$refs.suggest.$el.blur()
+      this.suggestLoading = true;
       this.showServerError = false;
       const response = await this.axios.get(`/api/suggest?keyword=${this.keyword || ''}&server=${this.selectedServer || ''}`);
-      this.suggest = response.data;
+      if(response.data.length > 0){
+        this.suggest = response.data;
+      }
+      this.suggestLoading = false;
     },
     async findChar() {
       this.showServerError = false;
@@ -300,6 +323,18 @@ export default {
         }
         localStorage.setItem("history",JSON.stringify(history));
       }
+    },
+    autoSelect(){
+      if(!(this.selectedChar && this.selectedChar.userid)){
+        if(this.suggest[0]){
+          this.selectedChar = this.suggest[0];
+          this.$refs.suggest.blur();
+        }
+      }
+    },
+    clearHistory(){
+      localStorage.removeItem("history");
+      this.history = []
     },
     loadHistory(){
       this.history = JSON.parse(localStorage.getItem("history") || "[]");

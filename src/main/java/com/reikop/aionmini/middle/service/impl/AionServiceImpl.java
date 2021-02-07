@@ -11,10 +11,12 @@ import com.reikop.aionmini.work.model.Status;
 import com.reikop.aionmini.work.model.User;
 import kong.unirest.json.JSONArray;
 import kong.unirest.json.JSONObject;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
@@ -35,6 +37,9 @@ public class AionServiceImpl implements AionService {
 
     @Override
     public List<User> suggestCharNames(String keyword, Servers server){
+        if(keyword.equals("")){
+            return Collections.emptyList();
+        }
         JSONArray suggest = connector.suggest(JSONConnections.SUGGEST_CHARS, keyword, server);
         List<User> userArrayList = new ArrayList<>();
         for (Object o : suggest) {

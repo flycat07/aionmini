@@ -20,7 +20,6 @@ public class JSONConnector {
         if(params != null && params.length > 0){
             uri = String.format(uri, params);
         }
-        System.out.println(uri);
         return Unirest.put(uri)
                 .header("Accept", "application/json, text/javascript, */*; q=0.01")
                 .header("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.104 Safari/537.36")
