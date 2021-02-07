@@ -43,7 +43,6 @@
 
 
       </v-row>
-      {{selectedChar}}
       <v-divider />
 
       <v-alert v-if="showServerError">가디언, 아칸서버는 지원되지 않습니다.</v-alert>
