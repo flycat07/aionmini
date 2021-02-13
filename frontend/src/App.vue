@@ -17,11 +17,9 @@
     <v-main>
       <v-container>
         <v-row>
-          <v-col cols="4"><find-char></find-char></v-col>
-          <v-col cols="4"><link-gen></link-gen></v-col>
+          <v-col cols="6"><find-char></find-char></v-col>
+          <v-col cols="6"><link-gen></link-gen></v-col>
         </v-row>
-        
-        
       </v-container>
     </v-main>
   </v-app>

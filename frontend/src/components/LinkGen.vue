@@ -4,30 +4,26 @@
     <v-card-text>
       <v-row>
         <v-col cols="12">
-          <v-autocomplete
-              outlined
-              flat
-              hide-details
-              label="검색"
-              prepend-inner-icon="mdi-magnify"
-              no-data-text="데이터가 없습니다."
-              item-text="charname"
-              v-model="selectedChar"
-              auto-select-first
-              :items="suggest"
-              :search-input.sync="keyword"
-              return-object
-          ></v-autocomplete>
+          <v-text-field v-model="keyword"
+                        prepend-inner-icon="mdi-magnify"
+                        outlined
+                        label="검색"
+                        flat/>
+        </v-col>
+        <v-divider />
+        <v-col cols="12" class="items">
+          <v-btn left @click="copyCode(s)" block outlined class="text-left mb-1" text v-for="s in suggest" :key="s.id">
+            <v-icon left>mdi-content-copy</v-icon>
+            <span v-html="addTagname(s.name)"></span>
+          </v-btn>
         </v-col>
       </v-row>
-
-
-      {{char}}
-
     </v-card-text>
   </v-card>
 </template>
 <script>
+import copy from 'copy-text-to-clipboard';
+
 export default {
   mounted() {
     const str = localStorage.getItem("item");
@@ -49,28 +45,37 @@ export default {
       suggest: [],
       hour: 0,
       time: "",
+      cancelSource: null,
+      suggestLoading: false,
       selectedChar: {},
       showServerError: true,
       char: null,
       result: {},
-      servers: [
-        {id: 1, name: "가디언", type: "GUARDIAN"},
-        {id: 2, name: "아칸", type: "ARKAN"},
-        {id: 21, name: "이스라펠", type: "ISRAFEL"},
-        {id: 22, name: "네자칸", type: "NEZAKAN"},
-        {id: 23, name: "지켈", type: "ZICKEL"},
-        {id: 24, name: "바이젤", type: "BYZEL"},
-        {id: 25, name: "트리니엘", type: "TRINIEL"},
-        {id: 26, name: "카이시넬", type: "KAISINEL"},
-        {id: 27, name: "루미엘", type: "LUMIEL"},
-      ]
     }
   },
   methods: {
     async search() {
-      this.showServerError = false;
-      const response = await this.axios.get(`/api/suggest?keyword=${this.keyword || ''}&server=${this.server}`);
-      this.suggest = response.data;
+      this.suggestLoading = true;
+      this.cancelSource = this.$cencelToken.source();
+      await this.axios.get(`/api/items?keyword=${this.keyword || ''}`, {
+        cancelToken: this.cancelSource.token }).then((response) => {
+        if (response) {
+          if(response.data.length > 0){
+            this.suggest = response.data;
+            // this.infoText = null;
+            this.cancelSource = null;
+          }
+        }
+      }).catch();
+      this.suggestLoading = false;
+    },
+    addTagname(text){
+      const keyword = this.keyword.split(" ").join("|");
+      console.info(keyword)
+      return text.replace(new RegExp("("+keyword+")", "g"), "<strong>$1</strong>")
+    },
+    copyCode({id}){
+      copy(`[item:${id}]`);
     },
     async findChar() {
       this.showServerError = false;
@@ -89,3 +94,11 @@ export default {
 }
 
 </script>
+<style>
+strong{
+  color: #dd2c00;
+}
+.items .v-btn__content{
+  display: block !important;
+}
+</style>

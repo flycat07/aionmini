@@ -55,18 +55,20 @@
 <v-divider class="my-1"></v-divider>
       <v-list-item-content class="justify-center" v-if="selectedChar.level">
         <div class="mx-auto text-center">
-          <v-avatar class="mr-2" size="48" >
+          <v-avatar tile class="mr-2" size="64" >
             <img :src="'https://profileimg.plaync.com/game_profile_images/aion/images?gameServerKey='+getOriginServerId(selectedChar.server)+'&charKey='+selectedChar.userid" 
             :alt="selectedChar.charname"/>
             </v-avatar>
-            
-          <v-btn class="mr-2" v-text="selectedChar.charname">Edit Account</v-btn>
-          <v-btn class="mr-2" v-text="'Lv.'+selectedChar.level">Edit Account</v-btn>
-          <v-btn class="mr-2" v-text="selectedChar.serverName">Edit Account</v-btn>
-          
-          <v-btn class="mr-2" v-text="selectedChar.raceName">Edit Account</v-btn>
-          <v-btn class="mr-2" v-text="selectedChar.className">Edit Account</v-btn>
-          
+          <v-btn text outlined class="mr-2" @click="newWindow">
+            <v-icon left>mdi-share</v-icon>
+            #{{selectedChar.charname}}
+
+            #LV.{{selectedChar.level}}
+            #{{selectedChar.serverName}}
+            #{{selectedChar.raceName}}
+            #{{selectedChar.className}}
+          </v-btn>
+
        
         </div>
       </v-list-item-content>
@@ -303,14 +305,9 @@ export default {
   },
   methods: {
     async search() {
-      this.$refs.suggest.$el.blur()
       this.suggestLoading = true;
       this.showServerError = false;
-
       this.cancelSource = this.$cencelToken.source();
-      // console.info(this.CancelToken)
-      // this.cancelSearch();
-      // this.cancelSource = this.CancelToken.source();
       await this.axios.get(`/api/suggest?keyword=${this.keyword || ''}&server=${this.selectedServer || ''}`, {
         cancelToken: this.cancelSource.token }).then((response) => {
           if (response) {
