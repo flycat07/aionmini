@@ -1,7 +1,9 @@
 <template>
   <v-card>
     <v-card-title>아이템 링크 생성기</v-card-title>
+    <v-card-subtitle>버튼을 클릭하고, 인게임에서 붙여넣기 하면 아이템링크가 생성됩니다.</v-card-subtitle>
     <v-card-text>
+
       <v-row>
         <v-col cols="12">
           <v-text-field v-model="keyword"
@@ -19,6 +21,27 @@
         </v-col>
       </v-row>
     </v-card-text>
+    <v-snackbar
+        top
+        text
+        color="success"
+        v-model="snackbar"
+        elevation="5"
+    >
+      선택한 아이템이 복사 되었습니다.
+      <template v-slot:action="{ attrs }">
+        <v-btn
+            text
+            v-bind="attrs"
+            icon
+            @click="snackbar = false"
+
+        >
+          <v-icon>mdi-close</v-icon>
+        </v-btn>
+      </template>
+
+    </v-snackbar>
   </v-card>
 </template>
 <script>
@@ -40,6 +63,7 @@ export default {
   },
   data () {
     return {
+      snackbar: false,
       server: "",
       keyword: "",
       suggest: [],
@@ -76,6 +100,7 @@ export default {
     },
     copyCode({id}){
       copy(`[item:${id}]`);
+      this.snackbar = true;
     },
     async findChar() {
       this.showServerError = false;
