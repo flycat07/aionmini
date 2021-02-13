@@ -9,14 +9,19 @@
           src="https://imgfiles-cdn.plaync.com/file/contents/download/20200619064945-tnwXZgDbd0m6GYurJcxV0-v4"
           width="80"
         />
-        <span>캐릭터 검색기</span>
+        <span>아이온 헬퍼</span>
       </div>
       <v-spacer></v-spacer>
       <span><v-icon left color="accent" v-text="hour > 6 || hour < 18 ? 'mdi-weather-sunny' : 'mdi-moon-waning-crescent'"></v-icon>{{time}}</span>
     </v-app-bar>
     <v-main>
       <v-container>
-        <find-char></find-char>
+        <v-row>
+          <v-col cols="4"><find-char></find-char></v-col>
+          <v-col cols="4"><link-gen></link-gen></v-col>
+        </v-row>
+        
+        
       </v-container>
     </v-main>
   </v-app>
@@ -25,11 +30,13 @@
 <script>
 import AionWatch from "./plugins/aionwatch"
 import FindChar from "./components/FindChar"
+import LinkGen from "./components/LinkGen"
 export default {
   name: 'App',
 
   components: {
-    FindChar
+    FindChar,
+    LinkGen
   },
   //
   // data: () => ({

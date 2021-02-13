@@ -1,5 +1,5 @@
 <template>
-  <v-card width="600">
+  <v-card>
     <v-card-title>캐릭터 검색기</v-card-title>
     <v-card-text>
       <v-row>
@@ -27,15 +27,22 @@
               :items="suggest"
               :search-input.sync="keyword"
               return-object
-              clear-on-select
-              open-on-clear
               clearable
+              auto-select-first
               :loading="suggestLoading"
-              @blur="selectedChar={}"
-              @keydown.enter="autoSelect"
+              
           >
             <template v-slot:item="{ item }">
-              {{item.charname}} / {{item.server}} / Lv.{{item.level}} / {{item.raceName}} / {{item.className}}
+
+          <v-list-item-avatar>
+           <img :src="'https://profileimg.plaync.com/game_profile_images/aion/images?gameServerKey='+getOriginServerId(item.server)+'&charKey='+item.userid" >
+          </v-list-item-avatar>
+
+          <v-list-item-content>
+            <v-list-item-title>{{item.charname}}</v-list-item-title>
+            <v-list-item-subtitle> {{item.serverName}} / Lv.{{item.level}} / {{item.raceName}} / {{item.className}}</v-list-item-subtitle>
+          </v-list-item-content>
+
             </template>
 
           </v-autocomplete>
@@ -43,23 +50,44 @@
 
 
       </v-row>
-      <v-divider />
-
-      <v-alert v-if="showServerError">가디언, 아칸서버는 지원되지 않습니다.</v-alert>
 
 
-      <v-subheader v-if="selectedChar.level">
-        <v-btn icon outlined class="secondary" @click="newWindow"><v-icon>mdi-share</v-icon></v-btn>
-        {{selectedChar.server}} / Lv.{{selectedChar.level}} / {{selectedChar.raceName}} / {{selectedChar.className}} / {{selectedChar.charname}}
-      </v-subheader>
-
+<v-divider class="my-1"></v-divider>
+      <v-list-item-content class="justify-center" v-if="selectedChar.level">
+        <div class="mx-auto text-center">
+          <v-avatar class="mr-2" size="48" >
+            <img :src="'https://profileimg.plaync.com/game_profile_images/aion/images?gameServerKey='+getOriginServerId(selectedChar.server)+'&charKey='+selectedChar.userid" 
+            :alt="selectedChar.charname"/>
+            </v-avatar>
+            
+          <v-btn class="mr-2" v-text="selectedChar.charname">Edit Account</v-btn>
+          <v-btn class="mr-2" v-text="'Lv.'+selectedChar.level">Edit Account</v-btn>
+          <v-btn class="mr-2" v-text="selectedChar.serverName">Edit Account</v-btn>
+          
+          <v-btn class="mr-2" v-text="selectedChar.raceName">Edit Account</v-btn>
+          <v-btn class="mr-2" v-text="selectedChar.className">Edit Account</v-btn>
+          
+       
+        </div>
+      </v-list-item-content>
+       <v-divider class="my-1"></v-divider>
       <v-simple-table dense>
         <thead>
         <tr><td colspan="2">주요 정보</td>
         </tr>
         </thead>
         <tbody>
-        <tr>
+          <tr v-if="findCharLoading">
+            <td colspan="2" class="text-center pa-10">
+              <v-progress-circular
+                  :size="70"
+                  :width="7"
+                  indeterminate
+                ></v-progress-circular>
+            </td>
+          </tr>
+          <template>
+        <tr v-if="!findCharLoading">
           <th class="text-left">생명력</th>
           <td class="text-right">{{totalStat.hp | fmt}}</td>
         </tr>
@@ -89,20 +117,22 @@
         </tr>
         <tr>
           <th class="text-left">PVP 공격력</th>
-          <td class="text-right">{{totalAbyss.att}}%</td>
+          <td class="text-right">{{totalAbyss.att | fix}}%</td>
         </tr>
         <tr>
           <th class="text-left">PVP 방어력</th>
-          <td class="text-right">{{totalAbyss.def}}%</td>
+          <td class="text-right">{{totalAbyss.def | fix}}%</td>
         </tr>
         <tr>
           <th class="text-left">킬 수</th>
           <td class="text-right">{{ (char.character_abyss || {}).totalKillCount | fmt}}</td>
         </tr>
+        </template>
         </tbody>
       </v-simple-table>
 
       <v-divider />
+
       <v-simple-table class="mt-5" dense>
         <template v-slot:default>
           <thead>
@@ -113,6 +143,16 @@
           </tr>
           </thead>
           <tbody>
+            <tr v-if="findCharLoading">
+              <td min-height="400px" class="text-center pa-10">
+              <v-progress-circular
+                  :size="70"
+                  :width="7"
+                  indeterminate
+                ></v-progress-circular>
+              </td>
+            </tr>
+            <template  v-if="!findCharLoading">
           <tr v-for="index in equipSort" :key="index">
             <td>
               <template v-if="equipSlot[index] != null" >
@@ -124,7 +164,9 @@
                 </span>
               </template>
             </td>
+          
           </tr>
+            </template>
 
           </tbody>
         </template>
@@ -140,6 +182,14 @@ export default {
   components:{
   },
   mounted() {
+    const server = localStorage.getItem("server");
+    if(server){
+      this.selectedServer = server;
+      
+    }
+        
+
+
     // const str = localStorage.getItem("item");
     // this.char = JSON.parse(str);
     // if(this.char.character_equipments){
@@ -155,7 +205,6 @@ export default {
       return this.calcAbyss(this.char.character_equipments || [])
     },
     equipSlot(){
-      console.info(_.groupBy(this.char.character_equipments, 'equipSlotType'))
       return _.groupBy(this.char.character_equipments, 'equipSlotType');
     },
     abyssItemCount(){
@@ -170,6 +219,10 @@ export default {
       if(this.keyword !== ""){
         this.search();
       }
+    },
+
+    selectedServer(){
+      localStorage.setItem("server", this.selectedServer);
     },
 
     selectedChar () {
@@ -205,8 +258,10 @@ export default {
       },
       equipSort: [0,17,1,18,3,11,12,4,5,2,10,6,7,8,9,16,15],
       selectedServer: null,
+      findCharLoading: false,
       server: "",
       keyword: "",
+      cancelSource: null,
       suggest: [],
       hour: 0,
       time: "",
@@ -248,17 +303,34 @@ export default {
   },
   methods: {
     async search() {
-      console.info(this.keyword)
       this.$refs.suggest.$el.blur()
       this.suggestLoading = true;
       this.showServerError = false;
-      const response = await this.axios.get(`/api/suggest?keyword=${this.keyword || ''}&server=${this.selectedServer || ''}`);
-      if(response.data.length > 0){
-        this.suggest = response.data;
-      }
+
+      this.cancelSource = this.$cencelToken.source();
+      // console.info(this.CancelToken)
+      // this.cancelSearch();
+      // this.cancelSource = this.CancelToken.source();
+      await this.axios.get(`/api/suggest?keyword=${this.keyword || ''}&server=${this.selectedServer || ''}`, {
+        cancelToken: this.cancelSource.token }).then((response) => {
+          if (response) {
+             if(response.data.length > 0){
+                this.suggest = response.data;
+                // this.infoText = null;
+                this.cancelSource = null;
+            }
+          }
+        }).catch();
       this.suggestLoading = false;
     },
+    cancelSearch () {
+      if (this.cancelSource) {
+        this.cancelSource.cancel('Start new search, stop active search');
+        console.log('cancel request done');
+      }
+    },
     async findChar() {
+      this.findCharLoading = true;
       this.showServerError = false;
       const {server, userid} = this.selectedChar;
       if (server === 'GUARDIAN' || server === 'ARKAN') {
@@ -267,6 +339,7 @@ export default {
       }
       const response = await this.axios.get(`/api/character/${server}/${userid}`);
       this.char = response.data;
+      this.findCharLoading = false;
 
       // console.info(this.char)
       // this.suggest = response.data;
@@ -324,12 +397,13 @@ export default {
       }
     },
     autoSelect(){
-      if(!(this.selectedChar && this.selectedChar.userid)){
-        if(this.suggest[0]){
+      console.info(this.selectedChar.userid, this.keyword === this.suggest[0].charname)
+      // if(!(this.selectedChar && this.selectedChar.userid)){
+        if(this.keyword === this.suggest[0].charname){
           this.selectedChar = this.suggest[0];
           this.$refs.suggest.blur();
         }
-      }
+      // }
     },
     clearHistory(){
       localStorage.removeItem("history");

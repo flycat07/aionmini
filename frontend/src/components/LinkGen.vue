@@ -1,9 +1,9 @@
 <template>
-  <v-card width="600">
-    <v-card-title>링크 생성기</v-card-title>
+  <v-card>
+    <v-card-title>아이템 링크 생성기</v-card-title>
     <v-card-text>
       <v-row>
-        <v-col cols="8">
+        <v-col cols="12">
           <v-autocomplete
               outlined
               flat
@@ -13,19 +13,14 @@
               no-data-text="데이터가 없습니다."
               item-text="charname"
               v-model="selectedChar"
+              auto-select-first
               :items="suggest"
               :search-input.sync="keyword"
               return-object
           ></v-autocomplete>
         </v-col>
-        <v-col cols="4">
-          <v-select flat outlined :items="servers" item-text="name" item-value="type" label="서버">
-          </v-select>
-        </v-col>
-
       </v-row>
 
-      <v-alert v-if="showServerError">가디언, 아칸서버는 지원되지 않습니다.</v-alert>
 
       {{char}}
 

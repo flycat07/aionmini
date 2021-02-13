@@ -48,6 +48,9 @@ public class AionServiceImpl implements AionService {
                 User user = new User();
                 user.setUserid(object.getInt("charId"));
                 user.setLevel(object.getInt("level"));
+                user.setImage(object.getString("profileImg"));
+                user.setServerName(object.getString("serverName"));
+                user.setLegionName(object.getString("legionName"));
                 user.setServer(Servers.getServerValue(object.getInt("serverId")));
                 user.setClassName(object.getString("className"));
                 user.setRaceName(object.getString("raceName"));

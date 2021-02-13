@@ -1,16 +1,9 @@
 package com.reikop.aionmini.work.model;
 
-
 import javax.persistence.*;
 
 @Entity(name = "user")
-@Table(
-        uniqueConstraints={
-                @UniqueConstraint(
-                        columnNames={"server","userid"}
-                )
-        }
-)
+@Table(uniqueConstraints = { @UniqueConstraint(columnNames = { "server", "userid" }) })
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.TABLE)
@@ -18,12 +11,39 @@ public class User {
     private Servers server;
     private int userid;
     private int level;
+    private String serverName;
+    private String image;
     private String raceName;
     private String className;
     private String charname;
+    private String legionName;
 
     public String getRaceName() {
         return raceName;
+    }
+
+    public String getLegionName() {
+        return legionName;
+    }
+
+    public void setLegionName(String legionName) {
+        this.legionName = legionName;
+    }
+
+    public String getServerName() {
+        return serverName;
+    }
+
+    public void setServerName(String serverName) {
+        this.serverName = serverName;
+    }
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
     }
 
     public void setRaceName(String raceName) {

@@ -8,13 +8,17 @@ import axios from "axios";
 // axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
 // axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
 
+
+// const cancelTokenSource = this.axios.CancelToken.source();
 let config = {
-  baseURL: process.env.baseURL || process.env.apiUrl || ""
+  baseURL: process.env.baseURL || process.env.apiUrl || "",
   // timeout: 60 * 1000, // Timeout
   // withCredentials: true, // Check cross-site Access-Control
 };
 
 const _axios = axios.create(config);
+const $cencelToken = axios.CancelToken;
+// const CancelToken = axios.CancelToken;
 
 _axios.interceptors.request.use(
   function(config) {
@@ -40,8 +44,12 @@ _axios.interceptors.response.use(
 );
 
 Plugin.install = function(Vue) {
-  Vue.axios = _axios;
-  window.axios = _axios;
+  Vue.prototype.$cencelToken = $cencelToken;
+  // Vue.prototype.$axios = $axios;
+  // Vue.axios = _axios;
+  // window.cancelToken = CancelToken;
+  // window.axios = _axios;
+  
   Object.defineProperties(Vue.prototype, {
     axios: {
       get() {
