@@ -305,26 +305,17 @@ export default {
   },
   methods: {
     async search() {
+      this.cancelSource && this.cancelSource.cancel();
       this.suggestLoading = true;
       this.showServerError = false;
       this.cancelSource = this.$cencelToken.source();
-      await this.axios.get(`/api/suggest?keyword=${this.keyword || ''}&server=${this.selectedServer || ''}`, {
-        cancelToken: this.cancelSource.token }).then((response) => {
-          if (response) {
-             if(response.data.length > 0){
-                this.suggest = response.data;
-                // this.infoText = null;
-                this.cancelSource = null;
-            }
-          }
-        }).catch();
-      this.suggestLoading = false;
-    },
-    cancelSearch () {
-      if (this.cancelSource) {
-        this.cancelSource.cancel('Start new search, stop active search');
-        console.log('cancel request done');
+      const response = await this.axios.get(`/api/suggest?keyword=${this.keyword || ''}&server=${this.selectedServer || ''}`, {
+        cancelToken: this.cancelSource.token
+      });
+      if (response && response.data.length > 0) {
+        this.suggest = response.data;
       }
+      this.suggestLoading = false;
     },
     async findChar() {
       this.findCharLoading = true;
@@ -350,7 +341,7 @@ export default {
       return _.find(this.servers, n => n.type === name).id;
     },
     openInven(id){
-      window.open(`http://aion.inven.co.kr/dataninfo2/item/detail.php?code=${id}`);
+      window.open(`http://aiondatabase.net/kr/item/${id}`);
     },
     classType(){
       switch (this.selectedChar.className) {
