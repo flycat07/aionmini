@@ -30,7 +30,7 @@
               clearable
               auto-select-first
               :loading="suggestLoading"
-              
+
           >
             <template v-slot:item="{ item }">
 
@@ -95,7 +95,7 @@
         </tr>
         <tr>
           <th class="text-left">마법저항</th>
-          <td class="text-right">{{totalStat.magicResist | fmt}}</td>
+          <td class="text-right" :class="{'red--text':totalStat.magicResist > 1700}">{{totalStat.magicResist | fmt}}</td>
         </tr>
         <tr v-if="classType()==='P'">
           <th class="text-left">공격력</th>
@@ -114,10 +114,6 @@
           <td class="text-right">{{totalStat.magicalAccuracy | fmt}}</td>
         </tr>
         <tr>
-          <th class="text-left">어비스아이템 수</th>
-          <td class="text-right">{{abyssItemCount}}</td>
-        </tr>
-        <tr>
           <th class="text-left">PVP 공격력</th>
           <td class="text-right">{{totalAbyss.att | fix}}%</td>
         </tr>
@@ -127,7 +123,7 @@
         </tr>
         <tr>
           <th class="text-left">킬 수</th>
-          <td class="text-right">{{ (char.character_abyss || {}).totalKillCount | fmt}}</td>
+          <td class="text-right" :class="{'red--text': (char.character_abyss || {}).totalKillCount > 10000}">{{ (char.character_abyss || {}).totalKillCount | fmt}}</td>
         </tr>
         </template>
         </tbody>
@@ -219,6 +215,7 @@ export default {
   watch: {
     keyword(){
       if(this.keyword !== ""){
+        this.keyword = (this.keyword || "").replaceAll(/[^a-zA-Zㄱ-힣]/gi, "");
         this.search();
       }
     },
@@ -275,17 +272,17 @@ export default {
       history: [],
       abyssItem: {
         'TEN': {
-          ARMOR: { SHOULDER: 2.4, FOOT: 2.4, TORSO:4, LEG: 3.2, HAND: 2.4 },
+          ARMOR: { SHIELD: 4, HEAD: 1.6, SHOULDER: 2.4, FOOT: 2.4, TORSO:4, LEG: 3.2, HAND: 2.4 },
           ACCESSORY: { FINGER: 1.6, WAIST: 1.6, EAR: 2.4, NECK:3.2 },
-          WEAPON: { BOTH: 8, RIGHT: 4.8 }
+          WEAPON: { BOTH: 8, RIGHT: 4.8 },
         },
         'HUN': {
-          ARMOR: { SHOULDER: 2.7, FOOT: 2.7, TORSO:4.5, LEG: 3.6, HAND: 2.7 },
+          ARMOR: { SHIELD: 4.5, HEAD: 1.8, SHOULDER: 2.7, FOOT: 2.7, TORSO:4.5, LEG: 3.6, HAND: 2.7 },
           ACCESSORY: { FINGER: 1.8, WAIST: 1.8, EAR: 2.7, NECK:3.6 },
           WEAPON: { BOTH: 9, RIGHT: 5.4 }
         },
         'THO': {
-          ARMOR: { SHOULDER: 3, FOOT: 2.4, TORSO:5, LEG: 4, HAND: 3 },
+          ARMOR: { SHIELD: 5, HEAD: 2, SHOULDER: 3, FOOT: 2.4, TORSO:5, LEG: 4, HAND: 3 },
           ACCESSORY: { FINGER: 2, WAIST: 2, EAR: 3, NECK:4 },
           WEAPON: { BOTH: 10, RIGHT: 6 }
         },
@@ -312,8 +309,10 @@ export default {
       const response = await this.axios.get(`/api/suggest?keyword=${this.keyword || ''}&server=${this.selectedServer || ''}`, {
         cancelToken: this.cancelSource.token
       });
-      if (response && response.data.length > 0) {
+      if (response && response.data) {
         this.suggest = response.data;
+      }else{
+        this.suggest = [];
       }
       this.suggestLoading = false;
     },
@@ -414,10 +413,17 @@ export default {
           }
           const item = this.abyssItem[level];
           const category = [equip.category1.alias, equip.category2.alias, equip.category3.alias];
+          console.info(category)
           if(category[0] === 'ACCESSORY'){
             att += item[category[0]][category[1]];
           }else if(category[0] === 'ARMOR'){
-            def += item[category[0]][category[2]];
+            if(category[1] === "HEAD"){
+              def += item[category[0]][category[1]];
+            }else if(category[1] === "SHIELD"){
+              def += item[category[0]][category[1]];
+            }else{
+              def += item[category[0]][category[2]];
+            }
           }else if(category[0] === 'WEAPON'){
             let weaponType = 'BOTH';
             switch (category[1]) {
