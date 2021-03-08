@@ -71,7 +71,9 @@
         </div>
       </v-list-item-content>
        <v-divider class="my-1" v-if="selectedChar != null"></v-divider>
-      <v-simple-table dense v-if="selectedChar != null">
+      <v-row>
+        <v-col cols="12" sm="6" md="12" lg="12" xl="6">
+        <v-simple-table dense v-if="selectedChar != null">
         <thead>
         <tr><td colspan="2">주요 정보</td>
         </tr>
@@ -134,16 +136,15 @@
         </template>
         </tbody>
       </v-simple-table>
+        </v-col>
 
-      <v-divider  v-if="selectedChar != null"/>
 
-      <v-simple-table class="mt-5" dense  v-if="selectedChar != null">
+<!--      <v-divider  v-if="selectedChar != null"/>-->
+      <v-col cols="12" sm="6" md="12" lg="12" xl="6">
+      <v-simple-table dense  v-if="selectedChar != null">
         <template v-slot:default>
           <thead>
-          <tr>
-            <th class="text-left" colspan="2">
-              장착 아이템
-            </th>
+          <tr><td colspan="2">장착 아이템</td>
           </tr>
           </thead>
           <tbody>
@@ -179,10 +180,7 @@
       <v-simple-table class="mt-5" dense  v-if="selectedChar != null">
         <template v-slot:default>
           <thead>
-          <tr>
-            <th class="text-left" colspan="2">
-              장착 스티그마
-            </th>
+          <tr><td colspan="2">장착 스티그마</td>
           </tr>
           </thead>
           <tbody>
@@ -214,6 +212,8 @@
           </tbody>
         </template>
       </v-simple-table>
+      </v-col>
+      </v-row>
     </v-card-text>
   </v-card>
 </template>

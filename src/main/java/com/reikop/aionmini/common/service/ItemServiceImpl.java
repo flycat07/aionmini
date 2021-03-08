@@ -31,7 +31,6 @@ public class ItemServiceImpl implements ItemService {
         }
         String keyword = value.replaceAll("[^\uAC00-\uD7A3xfe0-9a-zA-Z\\s]", "");
         String query = "select * from ITEMS WHERE " + getWhere(keyword) + " limit 30";
-        System.out.println(query);
         return jdbcTemplate.query(query, BeanPropertyRowMapper.newInstance(Item.class));
     }
 
@@ -45,7 +44,6 @@ public class ItemServiceImpl implements ItemService {
                     ps.setString(1, toJaso(argument.getName()));
                     ps.setInt(2, argument.getId());
                 });
-        System.out.println("END");
     }
 
     private String toJaso(String value){
