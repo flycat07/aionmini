@@ -175,6 +175,45 @@
           </tbody>
         </template>
       </v-simple-table>
+      <v-divider  v-if="selectedChar != null"/>
+      <v-simple-table class="mt-5" dense  v-if="selectedChar != null">
+        <template v-slot:default>
+          <thead>
+          <tr>
+            <th class="text-left" colspan="2">
+              장착 스티그마
+            </th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr v-if="findCharLoading">
+            <td min-height="400px" class="text-center pa-10">
+              <v-progress-circular
+                  :size="70"
+                  :width="7"
+                  indeterminate
+              ></v-progress-circular>
+            </td>
+          </tr>
+          <template  v-if="!findCharLoading">
+            <tr v-for="(sti, index) in char.character_stigma" :key="index">
+              <td>
+                  <v-avatar style="cursor: pointer" size="30px" tile
+                            @click="openInven(sti.itemId)">
+                    <img :src="sti.image">
+                  </v-avatar>
+                  <span class="ml-2" :style="{color: getColor(sti.quality)}">
+                  {{sti.name}}
+                </span>
+
+              </td>
+
+            </tr>
+          </template>
+
+          </tbody>
+        </template>
+      </v-simple-table>
     </v-card-text>
   </v-card>
 </template>
