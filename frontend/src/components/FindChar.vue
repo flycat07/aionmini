@@ -215,8 +215,7 @@ export default {
   watch: {
     keyword(){
       if(this.keyword !== ""){
-        this.keyword = (this.keyword || "").replaceAll(/[^a-zA-Zㄱ-힣]/gi, "");
-        this.search();
+        this.search((this.keyword || "").replaceAll(/[^a-zA-Zㄱ-힣]/gi, ""));
       }
     },
 
@@ -301,12 +300,12 @@ export default {
     }
   },
   methods: {
-    async search() {
+    async search(keyword) {
       this.cancelSource && this.cancelSource.cancel();
       this.suggestLoading = true;
       this.showServerError = false;
       this.cancelSource = this.$cencelToken.source();
-      const response = await this.axios.get(`/api/suggest?keyword=${this.keyword || ''}&server=${this.selectedServer || ''}`, {
+      const response = await this.axios.get(`/api/suggest?keyword=${keyword || ''}&server=${this.selectedServer || ''}`, {
         cancelToken: this.cancelSource.token
       });
       if (response && response.data) {
@@ -384,7 +383,7 @@ export default {
       }
     },
     autoSelect(){
-      console.info(this.selectedChar.userid, this.keyword === this.suggest[0].charname)
+      // console.info(this.selectedChar.userid, this.keyword === this.suggest[0].charname)
       // if(!(this.selectedChar && this.selectedChar.userid)){
         if(this.keyword === this.suggest[0].charname){
           this.selectedChar = this.suggest[0];
@@ -413,7 +412,6 @@ export default {
           }
           const item = this.abyssItem[level];
           const category = [equip.category1.alias, equip.category2.alias, equip.category3.alias];
-          console.info(category)
           if(category[0] === 'ACCESSORY'){
             att += item[category[0]][category[1]];
           }else if(category[0] === 'ARMOR'){
