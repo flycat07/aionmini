@@ -17,8 +17,8 @@
     <v-main>
       <v-container>
         <v-row>
-          <v-col cols="12" md="6" sm="6" xs="6"><find-char></find-char></v-col>
-          <v-col cols="12" md="6" sm="6" xs="6" ><link-gen></link-gen></v-col>
+          <v-col cols="12" md="6" sm="12" xs="12"><find-char></find-char></v-col>
+          <v-col cols="12" md="6" sm="12" xs="12" ><link-gen></link-gen></v-col>
         </v-row>
       </v-container>
     </v-main>

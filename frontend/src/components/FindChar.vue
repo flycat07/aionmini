@@ -7,13 +7,13 @@
           <v-btn class="mr-3" @click="clearHistory" x-small color="red" dark><v-icon left x-small>mdi-sticker-remove-outline</v-icon>전체 삭제</v-btn>
           <v-btn class="mr-1" @click="selectedChar = h" v-for="(h, index) in history" v-text="h.charname" :key="index" x-small outlined></v-btn>
         </v-col>
-        <v-col cols="4">
+        <v-col cols="6" >
           <v-select v-model="selectedServer" flat outlined
                     clearable
                     :items="servers" item-text="name" item-value="type" label="서버">
           </v-select>
         </v-col>
-        <v-col cols="8">
+        <v-col cols="6">
           <v-autocomplete
               ref="suggest"
               outlined
@@ -47,13 +47,11 @@
 
           </v-autocomplete>
         </v-col>
-
-
       </v-row>
 
 
-<v-divider class="my-1"></v-divider>
-      <v-list-item-content class="justify-center" v-if="selectedChar.level">
+<v-divider class="my-1" v-if="selectedChar != null"></v-divider>
+      <v-list-item-content class="justify-center" v-if="selectedChar != null && selectedChar.level">
         <div class="mx-auto text-center">
           <v-avatar tile class="mr-2" size="64" >
             <img :src="'https://profileimg.plaync.com/game_profile_images/aion/images?gameServerKey='+getOriginServerId(selectedChar.server)+'&charKey='+selectedChar.userid" 
@@ -72,8 +70,8 @@
        
         </div>
       </v-list-item-content>
-       <v-divider class="my-1"></v-divider>
-      <v-simple-table dense>
+       <v-divider class="my-1" v-if="selectedChar != null"></v-divider>
+      <v-simple-table dense v-if="selectedChar != null">
         <thead>
         <tr><td colspan="2">주요 정보</td>
         </tr>
@@ -107,12 +105,20 @@
         </tr>
         <tr v-if="classType()==='M'">
           <th class="text-left">마법증폭</th>
-          <td class="text-right">{{totalStat.magicalBoost | fmt}}</td>
+          <td class="text-right" :class="{'red--text':totalStat.magicalBoost > 2400}">{{totalStat.magicalBoost | fmt}}</td>
         </tr>
         <tr v-if="classType()==='M'">
           <th class="text-left">마법적중</th>
-          <td class="text-right">{{totalStat.magicalAccuracy | fmt}}</td>
+          <td class="text-right" :class="{'red--text':totalStat.magicalAccuracy > 1700}">{{totalStat.magicalAccuracy | fmt}}</td>
         </tr>
+            <tr>
+              <th class="text-left">물치저항</th>
+              <td class="text-right">{{totalStat.phyCriticalReduceRate | fmt}}</td>
+            </tr>
+            <tr>
+              <th class="text-left">물치방어</th>
+              <td class="text-right">{{totalStat.phyCriticalDamageReduce | fmt}}</td>
+            </tr>
         <tr>
           <th class="text-left">PVP 공격력</th>
           <td class="text-right">{{totalAbyss.att | fix}}%</td>
@@ -129,9 +135,9 @@
         </tbody>
       </v-simple-table>
 
-      <v-divider />
+      <v-divider  v-if="selectedChar != null"/>
 
-      <v-simple-table class="mt-5" dense>
+      <v-simple-table class="mt-5" dense  v-if="selectedChar != null">
         <template v-slot:default>
           <thead>
           <tr>
@@ -214,7 +220,8 @@ export default {
   },
   watch: {
     keyword(){
-      if(this.keyword !== ""){
+      console.info(this.keyword)
+      if(this.keyword != null && this.keyword !== ""){
         this.search((this.keyword || "").replaceAll(/[^a-zA-Zㄱ-힣]/gi, ""));
       }
     },
@@ -224,7 +231,7 @@ export default {
     },
 
     selectedChar () {
-      if(this.selectedChar.userid){
+      if(this.selectedChar && this.selectedChar.userid){
         this.addThisChar();
         this.findChar();
         this.loadHistory();
@@ -263,7 +270,7 @@ export default {
       suggest: [],
       hour: 0,
       time: "",
-      selectedChar: {},
+      selectedChar: null,
       suggestLoading: false,
       showServerError: false,
       char: {},
