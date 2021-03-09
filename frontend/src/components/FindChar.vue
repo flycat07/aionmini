@@ -97,6 +97,10 @@
           <th class="text-left">마법저항</th>
           <td class="text-right" :class="{'red--text':totalStat.magicResist > 1700}">{{totalStat.magicResist | fmt}}</td>
         </tr>
+        <tr v-if="totalStat.block > 1000 && (this.selectedChar.className ==='치유성' || this.selectedChar.className ==='수호성' || this.selectedChar.className ==='호법성')">
+          <th class="text-left">방패방어</th>
+          <td class="text-right" :class="{'red--text':totalStat.block > 2650}">{{totalStat.block | fmt}}</td>
+        </tr>
         <tr v-if="classType()==='P'">
           <th class="text-left">공격력</th>
           <td class="text-right">{{Math.max(totalStat.physicalLeft, totalStat.physicalRight) | fmt}}</td>
@@ -105,10 +109,15 @@
           <th class="text-left">명중</th>
           <td class="text-right">{{Math.max(totalStat.accuracyLeft, totalStat.accuracyRight) | fmt}}</td>
         </tr>
+        <tr v-if="classType()==='P'">
+          <th class="text-left">물리치명타</th>
+          <td class="text-right">{{Math.max(totalStat.criticalLeft, totalStat.criticalRight) | fmt}}</td>
+        </tr>
         <tr v-if="classType()==='M'">
           <th class="text-left">마법증폭</th>
           <td class="text-right" :class="{'red--text':totalStat.magicalBoost > 2400}">{{totalStat.magicalBoost | fmt}}</td>
         </tr>
+
         <tr v-if="classType()==='M'">
           <th class="text-left">마법적중</th>
           <td class="text-right" :class="{'red--text':totalStat.magicalAccuracy > 1700}">{{totalStat.magicalAccuracy | fmt}}</td>
