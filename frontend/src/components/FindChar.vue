@@ -111,15 +111,15 @@
         </tr>
         <tr v-if="classType()==='P'">
           <th class="text-left">공격력</th>
-          <td class="text-right">{{Math.max(totalStat.physicalLeft, totalStat.physicalRight) | fmt}}</td>
+          <td class="text-right">{{totalStat.physicalRight | fmt}}</td>
         </tr>
         <tr v-if="classType()==='P'">
           <th class="text-left">명중</th>
-          <td class="text-right">{{Math.max(totalStat.accuracyLeft, totalStat.accuracyRight) | fmt}}</td>
+          <td class="text-right">{{totalStat.accuracyRight | fmt}}</td>
         </tr>
         <tr v-if="classType()==='P'">
           <th class="text-left">물리치명타</th>
-          <td class="text-right">{{Math.max(totalStat.criticalLeft, totalStat.criticalRight) | fmt}}</td>
+          <td class="text-right">{{totalStat.criticalRight | fmt}}</td>
         </tr>
         <tr v-if="classType()==='M'">
           <th class="text-left">마법증폭</th>
