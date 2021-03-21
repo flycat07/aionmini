@@ -16,18 +16,27 @@ public class User {
     private String raceName;
     private String className;
     private String charname;
-    private String legionName;
+    private String guildName;
+    private int guildId;
+
+    public String getGuildName() {
+        return guildName;
+    }
+
+    public void setGuildName(String guildName) {
+        this.guildName = guildName;
+    }
+
+    public int getGuildId() {
+        return guildId;
+    }
+
+    public void setGuildId(int guildId) {
+        this.guildId = guildId;
+    }
 
     public String getRaceName() {
         return raceName;
-    }
-
-    public String getLegionName() {
-        return legionName;
-    }
-
-    public void setLegionName(String legionName) {
-        this.legionName = legionName;
     }
 
     public String getServerName() {

@@ -46,15 +46,16 @@ public class AionServiceImpl implements AionService {
             JSONObject object = (JSONObject) o;
             if(object.getInt("serverId") > 10){
                 User user = new User();
-                user.setUserid(object.getInt("charId"));
                 user.setLevel(object.getInt("level"));
+                user.setUserid(object.getInt("charId"));
+                user.setGuildId(object.getInt("legionId"));
                 user.setImage(object.getString("profileImg"));
-                user.setServerName(object.getString("serverName"));
-                user.setLegionName(object.getString("legionName"));
-                user.setServer(Servers.getServerValue(object.getInt("serverId")));
-                user.setClassName(object.getString("className"));
                 user.setRaceName(object.getString("raceName"));
                 String username = object.getString("charName");
+                user.setClassName(object.getString("className"));
+                user.setGuildName(object.getString("legionName"));
+                user.setServerName(object.getString("serverName"));
+                user.setServer(Servers.getServerValue(object.getInt("serverId")));
                 user.setCharname(username.replaceAll("<(/)?([a-zA-Z]*)(\\s[a-zA-Z]*=[^>]*)?(\\s)*(/)?>", ""));
                 userArrayList.add(user);
                 userService.putUser(user);

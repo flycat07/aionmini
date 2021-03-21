@@ -7,6 +7,9 @@
           <v-btn class="mr-3" @click="clearHistory" x-small color="red" dark><v-icon left x-small>mdi-sticker-remove-outline</v-icon>전체 삭제</v-btn>
           <v-btn class="mr-1" @click="selectedChar = h" v-for="(h, index) in history" v-text="h.charname" :key="index" x-small outlined></v-btn>
         </v-col>
+        <v-col cols="12">
+          <v-checkbox v-model="only50" label="50미만 표시안함" hide-details class="ma-0"></v-checkbox>
+        </v-col>
         <v-col cols="6" >
           <v-select v-model="selectedServer" flat outlined
                     clearable
@@ -53,27 +56,32 @@
 <v-divider class="my-1" v-if="selectedChar != null"></v-divider>
       <v-list-item-content class="justify-center" v-if="selectedChar != null && selectedChar.level">
         <div class="mx-auto text-center">
-          <v-avatar tile class="mr-2" size="64" >
-            <img :src="'https://profileimg.plaync.com/game_profile_images/aion/images?gameServerKey='+getOriginServerId(selectedChar.server)+'&charKey='+selectedChar.userid" 
+          <v-avatar tile class="mr-2" size="100" >
+            <img :src="'https://profileimg.plaync.com/game_profile_images/aion/images?gameServerKey='+getOriginServerId(selectedChar.server)+'&charKey='+selectedChar.userid"
             :alt="selectedChar.charname"/>
             </v-avatar>
           <v-btn text outlined class="mr-2" @click="newWindow">
             <v-icon left>mdi-share</v-icon>
+
             #{{selectedChar.charname}}
 
             #LV.{{selectedChar.level}}
             #{{selectedChar.serverName}}
-            #{{selectedChar.raceName}}
             #{{selectedChar.className}}
           </v-btn>
-
+          <v-btn v-if="selectedChar.guildId" text outlined class="mr-2" @click="showLegion">
+            #{{selectedChar.guildName}}
+          </v-btn>
        
         </div>
       </v-list-item-content>
        <v-divider class="my-1" v-if="selectedChar != null"></v-divider>
       <v-row>
         <v-col cols="12" sm="6" md="12" lg="12" xl="6">
-        <v-simple-table dense v-if="selectedChar != null">
+        <v-simple-table dense dark
+                        class="pb-1"
+                        style="background-color: #2e373e"
+                        v-if="selectedChar != null">
         <thead>
         <tr><td colspan="2">주요 정보</td>
         </tr>
@@ -138,10 +146,20 @@
           <th class="text-left">PVP 방어력</th>
           <td class="text-right">{{totalAbyss.def | fix}}%</td>
         </tr>
-        <tr>
-          <th class="text-left">킬 수</th>
-          <td class="text-right" :class="{'red--text': (char.character_abyss || {}).totalKillCount > 10000}">{{ (char.character_abyss || {}).totalKillCount | fmt}}</td>
+
+            <tr v-if="!findCharLoading">
+              <th class="text-left">어비스 포인트</th>
+              <td class="text-right">{{char.character_abyss.abyssPoint | fmt}}</td>
+            </tr>
+        <tr v-if="!findCharLoading">
+          <th class="text-left">어비스 계급</th>
+          <td class="text-right">{{char.character_abyss.rankName}}</td>
         </tr>
+
+            <tr>
+              <th class="text-left">킬 수</th>
+              <td class="text-right" :class="{'red--text': (char.character_abyss || {}).totalKillCount > 10000}">{{ (char.character_abyss || {}).totalKillCount | fmt}}</td>
+            </tr>
         </template>
         </tbody>
       </v-simple-table>
@@ -150,13 +168,15 @@
 
 <!--      <v-divider  v-if="selectedChar != null"/>-->
       <v-col cols="12" sm="6" md="12" lg="12" xl="6">
-      <v-simple-table dense  v-if="selectedChar != null">
+      <v-simple-table dense  v-if="selectedChar != null"
+                      class="pb-2"
+                      style="background-color: #564b37" dark>
         <template v-slot:default>
           <thead>
           <tr><td colspan="2">장착 아이템</td>
           </tr>
           </thead>
-          <tbody>
+          <tbody >
             <tr v-if="findCharLoading">
               <td min-height="400px" class="text-center pa-10">
               <v-progress-circular
@@ -174,7 +194,7 @@
                   <img :src="equipSlot[index][0].image">
                 </v-avatar>
                 <span class="ml-2" :style="{color: getColor(equipSlot[index][0].quality)}">
-                  <template v-if="equipSlot[index][0].enchantCount > 0">+{{equipSlot[index][0].enchantCount}}</template> {{equipSlot[index][0].name}}
+                  <template v-if="equipSlot[index][0].enchantCount > 0">+{{equipSlot[index][0].enchantCount}} </template>{{equipSlot[index][0].name}}
                 </span>
               </template>
             </td>
@@ -186,7 +206,9 @@
         </template>
       </v-simple-table>
       <v-divider  v-if="selectedChar != null"/>
-      <v-simple-table class="mt-5" dense  v-if="selectedChar != null">
+      <v-simple-table style="background-color: #181a26"
+                      dark
+                      class="mt-5 pb-1" dense  v-if="selectedChar != null">
         <template v-slot:default>
           <thead>
           <tr><td colspan="2">장착 스티그마</td>
@@ -209,9 +231,7 @@
                             @click="openInven(sti.itemId)">
                     <img :src="sti.image">
                   </v-avatar>
-                  <span class="ml-2" :style="{color: getColor(sti.quality)}">
-                  {{sti.name}}
-                </span>
+                  <span class="ml-2" :style="{color: getColor(sti.quality)}">{{sti.name}}</span>
 
               </td>
 
@@ -235,9 +255,9 @@ export default {
   },
   mounted() {
     const server = localStorage.getItem("server");
+    this.only50 = localStorage.getItem("only50") === 'true';
     if(server){
       this.selectedServer = server;
-      
     }
         
 
@@ -267,8 +287,14 @@ export default {
     }
   },
   watch: {
+    only50(){
+      if(this.only50){
+        localStorage.setItem("only50", 'true');
+      }else{
+        localStorage.removeItem("only50");
+      }
+    },
     keyword(){
-      console.info(this.keyword)
       if(this.keyword != null && this.keyword !== ""){
         this.search((this.keyword || "").replaceAll(/[^a-zA-Zㄱ-힣]/gi, ""));
       }
@@ -311,6 +337,7 @@ export default {
       },
       equipSort: [0,17,1,18,3,11,12,4,5,2,10,6,7,8,9,16,15],
       selectedServer: null,
+      only50: false,
       findCharLoading: false,
       server: "",
       keyword: "",
@@ -364,7 +391,7 @@ export default {
         cancelToken: this.cancelSource.token
       });
       if (response && response.data) {
-        this.suggest = response.data;
+        this.suggest = response.data.filter(s => !this.only50 || s.level === 50);
       }else{
         this.suggest = [];
       }
@@ -390,6 +417,12 @@ export default {
       const id = this.getOriginServerId(server);
       window.open(`https://aion.plaync.com/characters/server/${id}/id/${userid}/home`);
     },
+    showLegion(){
+      const {server, guildId} = this.selectedChar;
+      const id = this.getOriginServerId(server);
+      window.open(`https://aion.plaync.com/legions/server/${id}/id/${guildId}/home`);
+    },
+
     getOriginServerId(name){
       return _.find(this.servers, n => n.type === name).id;
     },
@@ -414,10 +447,10 @@ export default {
     getColor(quality){
       switch (quality){
         case 'common' : return "#acacac";
-        case 'rare' : return "#629c5b";
-        case 'legend' : return "#5294ac";
-        case 'unique' : return "#ada551";
-        case 'epic' : return "#b47150";
+        case 'rare' : return "#38d723"; //629c5b
+        case 'legend' : return "#1bcdf3"; //5294ac
+        case 'unique' : return "#e3c565"; //ada551
+        case 'epic' : return "#e47b4c";  //b47150
         case 'mythic' : return "#9b4aff";
         case 'ancient' : return "#f1a12e";
         case 'relic' : return "#dd43ef";
