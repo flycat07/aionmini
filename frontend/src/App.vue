@@ -12,7 +12,13 @@
         <span>아이온 헬퍼</span>
       </div>
       <v-spacer></v-spacer>
-      <span><v-icon left color="accent" v-text="hour > 6 || hour < 18 ? 'mdi-weather-sunny' : 'mdi-moon-waning-crescent'"></v-icon>{{time}}</span>
+      <span class="mr-2">제작자</span>
+      <v-btn @click="openGuestbook" icon class="mx-0">
+        <v-avatar>
+          <v-img src="https://profileimg.plaync.com/game_profile_images/aion/images?gameServerKey=22&charKey=72701"></v-img>
+        </v-avatar>
+      </v-btn>
+
     </v-app-bar>
     <v-main>
       <v-container>
@@ -41,7 +47,7 @@ export default {
   //   //
   // }),
   mounted() {
-    setInterval(this.updateTime, 300)
+    // setInterval(this.updateTime, 300)
   },
   watch: {
     keyword () {
@@ -88,6 +94,9 @@ export default {
       this.char = response.data;
       console.info(this.char)
       // this.suggest = response.data;
+    },
+    openGuestbook(){
+      window.open(`https://aion.plaync.com/characters/server/22/id/72701/home`);
     },
     updateTime(){
       const watch = new AionWatch();
