@@ -6,8 +6,9 @@ module.exports = {
             }
         }
     },
-
+    filenameHashing:false,
     transpileDependencies: [
-      'vuetify'
+      'vuetify', 'copy-text-to-clipboard'
     ]
+
 };

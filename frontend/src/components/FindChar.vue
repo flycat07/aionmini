@@ -296,7 +296,7 @@ export default {
     },
     keyword(){
       if(this.keyword != null && this.keyword !== ""){
-        this.search((this.keyword || "").replaceAll(/[^a-zA-Zㄱ-힣]/gi, ""));
+        this.search(this.keyword.replace(/[^a-zA-Zㄱ-힣]/gi, ""));
       }
     },
 
@@ -387,7 +387,11 @@ export default {
       this.suggestLoading = true;
       this.showServerError = false;
       this.cancelSource = this.$cencelToken.source();
-      const response = await this.axios.get(`/api/suggest?keyword=${keyword || ''}&server=${this.selectedServer || ''}`, {
+      const params = new URLSearchParams();
+      params.append('keyword', keyword);
+      params.append('server', this.selectedServer);
+      console.info(params)
+      const response = await this.axios.post(`/api/suggest`, params, {
         cancelToken: this.cancelSource.token
       });
       if (response && response.data) {

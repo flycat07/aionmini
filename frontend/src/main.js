@@ -1,3 +1,5 @@
+import "core-js/stable";
+import "regenerator-runtime/runtime";
 import 'promise-polyfill/src/polyfill';
 import Vue from 'vue'
 import './plugins/axios'
