@@ -10,6 +10,6 @@ public interface AionService {
 
     List<User> suggestCharNames(String keyword, Servers server);
 
-    String getStatus(Status status);
+    String getStatus(String userAgent, Status status);
 
 }

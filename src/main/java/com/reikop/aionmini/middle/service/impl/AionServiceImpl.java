@@ -1,6 +1,5 @@
 package com.reikop.aionmini.middle.service.impl;
 
-import com.google.gson.JsonObject;
 import com.reikop.aionmini.common.service.StatusService;
 import com.reikop.aionmini.common.service.UserService;
 import com.reikop.aionmini.middle.service.AionService;
@@ -11,7 +10,6 @@ import com.reikop.aionmini.work.model.Status;
 import com.reikop.aionmini.work.model.User;
 import kong.unirest.json.JSONArray;
 import kong.unirest.json.JSONObject;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -66,8 +64,8 @@ public class AionServiceImpl implements AionService {
     }
 
     @Override
-    public String getStatus(Status status) {
-        String call = connector.status(JSONConnections.STATUS, status.getServer().getServer(), status.getUserid());
+    public String getStatus(String userAgent, Status status) {
+        String call = connector.status(JSONConnections.STATUS, userAgent, status.getServer().getServer(), status.getUserid());
         status.setStatus(call);
         statusService.putData(status);
         return call;

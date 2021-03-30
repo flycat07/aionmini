@@ -2,6 +2,7 @@
   <v-app>
     <v-app-bar app color="primary" dark>
       <div class="d-flex align-center">
+        <v-btn text dark @click="openAion">
         <v-img
           alt="Aion"
           class="shrink mr-2"
@@ -9,43 +10,50 @@
           src="https://imgfiles-cdn.plaync.com/file/contents/download/20200619064945-tnwXZgDbd0m6GYurJcxV0-v4"
           width="80"
         />
+        </v-btn>
         <span>아이온 헬퍼</span>
       </div>
       <v-spacer></v-spacer>
-      <span class="mr-2">제작자</span>
-      <v-btn @click="openGuestbook" icon class="mx-0">
-        <v-avatar>
-          <v-img src="https://profileimg.plaync.com/game_profile_images/aion/images?gameServerKey=22&charKey=72701"></v-img>
-        </v-avatar>
-      </v-btn>
+
+      <v-tooltip left>
+        <template v-slot:activator="{ on, attrs }">
+          <v-badge icon="mdi-crown" overlap>
+          <v-btn @click="openGuestbook" icon class="mx-0" v-bind="attrs" v-on="on">
+            <v-avatar>
+              <v-img src="https://profileimg.plaync.com/game_profile_images/aion/images?gameServerKey=22&charKey=72701"></v-img>
+            </v-avatar>
+          </v-btn>
+          </v-badge>
+        </template>
+        <span>제작자</span>
+      </v-tooltip>
 
     </v-app-bar>
-    <v-main>
-      <v-container>
+    <v-main  class="grey lighten-3">
+      <v-container >
         <v-row>
-          <v-col cols="12" md="6" sm="12" xs="12"><find-char></find-char></v-col>
-          <v-col cols="12" md="6" sm="12" xs="12" ><link-gen></link-gen></v-col>
+          <v-col cols="12" v-if="navi === 'findchar'"><find-char></find-char></v-col>
+          <v-col cols="12" v-if="navi === 'link'"><link-gen></link-gen></v-col>
         </v-row>
       </v-container>
     </v-main>
-<!--    <v-bottom-navigation v-model="value">-->
-<!--      <v-btn value="recent">-->
-<!--        <span>Recent</span>-->
-<!--        <v-icon>mdi-history</v-icon>-->
-<!--      </v-btn>-->
 
-<!--      <v-btn value="favorites">-->
-<!--        <span>Favorites</span>-->
+    <v-bottom-navigation v-model="navi">
+      <v-btn value="findchar">
+        <span>캐릭터 검색</span>
+        <v-icon>mdi-human-greeting</v-icon>
+      </v-btn>
 
-<!--        <v-icon>mdi-heart</v-icon>-->
-<!--      </v-btn>-->
+      <v-btn value="link">
+        <span>아이템 링크</span>
+        <v-icon>mdi-link</v-icon>
+      </v-btn>
 
 <!--      <v-btn value="nearby">-->
-<!--        <span>Nearby</span>-->
-
-<!--        <v-icon>mdi-map-marker</v-icon>-->
+<!--        <span>레기온 문장 생성기</span>-->
+<!--        <v-icon>mdi-flag-checkered</v-icon>-->
 <!--      </v-btn>-->
-<!--    </v-bottom-navigation>-->
+    </v-bottom-navigation>
   </v-app>
 </template>
 
@@ -77,6 +85,7 @@ export default {
   },
   data () {
     return {
+      navi: 1,
       server: "",
       keyword: "",
       suggest: [],
@@ -113,8 +122,11 @@ export default {
       console.info(this.char)
       // this.suggest = response.data;
     },
+    openAion(){
+      window.open(`https://aion.plaync.com/`);
+    },
     openGuestbook(){
-      window.open(`https://aion.plaync.com/characters/server/22/id/72701/home`);
+      window.open(`https://aion.plaync.com/characters/server/22/id/72701/board/guestbook`);
     },
     updateTime(){
       const watch = new AionWatch();

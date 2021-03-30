@@ -15,16 +15,18 @@ public class JSONConnector {
     private void close(){
     }
 
-    public String status(JSONConnections connections, Object... params) {
+    public String status(JSONConnections connections, String userAgent, Object... params) {
         String uri = connections.getUrl();
         if(params != null && params.length > 0){
             uri = String.format(uri, params);
         }
+
         return Unirest.put(uri)
                 .header("Accept", "application/json, text/javascript, */*; q=0.01")
-                .header("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.104 Safari/537.36")
+                .header("User-Agent", userAgent)
                 .header("Content-Type", "application/json")
                 .body("{\"keyList\":[\"character_stats\",\"character_equipments\",\"character_abyss\",\"character_stigma\"]}")
+                .socketTimeout(800)
                 .asString()
 //                .ifFailure(Error.class, r -> r.getBody().printStackTrace())
                 .getBody();

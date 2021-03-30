@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 @RequestMapping("/api")
@@ -38,13 +39,14 @@ public class DataController {
 //    }
 
     @RequestMapping("/character/{server}/{id}")
-    private String characterInfo(@PathVariable("server") Servers server,
+    private String characterInfo(HttpServletRequest request,
+                                 @PathVariable("server") Servers server,
                                  @PathVariable("id") int id){
         Status status = new Status();
         status.setServer(server);
         status.setUserid(id);
-
-        return aionService.getStatus(status);
+        String userAgent = request.getHeader("User-Agent");
+        return aionService.getStatus(userAgent, status);
     }
 
 }

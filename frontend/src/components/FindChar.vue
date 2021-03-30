@@ -1,4 +1,5 @@
 <template>
+  <div>
   <v-card>
     <v-card-title>캐릭터 검색기</v-card-title>
     <v-card-text>
@@ -10,14 +11,17 @@
         <v-col cols="12">
           <v-checkbox v-model="only50" label="50미만 표시안함" hide-details class="ma-0"></v-checkbox>
         </v-col>
-        <v-col cols="6" >
+        <v-col cols="6" md="4" lg="2">
           <v-select v-model="selectedServer" flat outlined
                     clearable
+                    validate-on-blur
+                    :rules="[v => v != null || '서버를 설정해 주세요']"
                     :items="servers" item-text="name" item-value="type" label="서버">
           </v-select>
         </v-col>
-        <v-col cols="6">
+        <v-col cols="6" md="8" lg="10">
           <v-autocomplete
+              :disabled="selectedServer == null"
               ref="suggest"
               outlined
               flat
@@ -33,7 +37,6 @@
               clearable
               auto-select-first
               :loading="suggestLoading"
-
           >
             <template v-slot:item="{ item }">
 
@@ -60,24 +63,25 @@
             <img :src="'https://profileimg.plaync.com/game_profile_images/aion/images?gameServerKey='+getOriginServerId(selectedChar.server)+'&charKey='+selectedChar.userid"
             :alt="selectedChar.charname"/>
             </v-avatar>
-          <v-btn text outlined class="mr-2" @click="newWindow">
-            <v-icon left>mdi-share</v-icon>
-
+          <v-btn text outlined class="mr-2 mt-1" @click="newWindow">
+            <v-icon left>mdi-account</v-icon>
             #{{selectedChar.charname}}
-
+            #{{char.character_abyss.rankName}}
             #LV.{{selectedChar.level}}
             #{{selectedChar.serverName}}
             #{{selectedChar.className}}
+
           </v-btn>
-          <v-btn v-if="selectedChar.guildId" text outlined class="mr-2" @click="showLegion">
-            #{{selectedChar.guildName}}
+          <v-btn v-if="selectedChar.guildId" text outlined class="mr-2 mt-1" @click="showLegion">
+            <v-icon>mdi-shield-star</v-icon>
+            {{selectedChar.guildName}}
           </v-btn>
        
         </div>
       </v-list-item-content>
        <v-divider class="my-1" v-if="selectedChar != null"></v-divider>
       <v-row>
-        <v-col cols="12" sm="6" md="12" lg="12" xl="6">
+        <v-col cols="12" sm="6" md="6" lg="4" xl="4">
         <v-simple-table dense dark
                         class="pb-1"
                         style="background-color: #2e373e"
@@ -107,7 +111,11 @@
         </tr>
         <tr v-if="totalStat.block > 1000 && (this.selectedChar.className ==='치유성' || this.selectedChar.className ==='수호성' || this.selectedChar.className ==='호법성')">
           <th class="text-left">방패방어</th>
-          <td class="text-right" :class="{'red--text':totalStat.block > 2650}">{{totalStat.block | fmt}}</td>
+          <td class="text-right" :class="{'red--text':totalStat.block > 2500}">{{totalStat.block | fmt}}</td>
+        </tr>
+        <tr v-if="totalStat.dodge > 2000">
+          <th class="text-left">회피</th>
+          <td class="text-right" :class="{'red--text':totalStat.dodge > 2500}">{{totalStat.block | fmt}}</td>
         </tr>
         <tr v-if="classType()==='P'">
           <th class="text-left">공격력</th>
@@ -147,27 +155,20 @@
           <td class="text-right">{{totalAbyss.def | fix}}%</td>
         </tr>
 
-            <tr v-if="!findCharLoading">
-              <th class="text-left">어비스 포인트</th>
-              <td class="text-right">{{char.character_abyss.abyssPoint | fmt}}</td>
-            </tr>
-        <tr v-if="!findCharLoading">
-          <th class="text-left">어비스 계급</th>
-          <td class="text-right">{{char.character_abyss.rankName}}</td>
-        </tr>
-
             <tr>
               <th class="text-left">킬 수</th>
               <td class="text-right" :class="{'red--text': (char.character_abyss || {}).totalKillCount > 10000}">{{ (char.character_abyss || {}).totalKillCount | fmt}}</td>
+            </tr>
+
+            <tr v-if="!findCharLoading && char.character_abyss">
+              <th class="text-left">어비스 포인트</th>
+              <td class="text-right">{{char.character_abyss.abyssPoint | fmt}}</td>
             </tr>
         </template>
         </tbody>
       </v-simple-table>
         </v-col>
-
-
-<!--      <v-divider  v-if="selectedChar != null"/>-->
-      <v-col cols="12" sm="6" md="12" lg="12" xl="6">
+        <v-col cols="12" sm="6" md="6" lg="4" xl="4">
       <v-simple-table dense  v-if="selectedChar != null"
                       class="pb-2"
                       style="background-color: #564b37" dark>
@@ -188,9 +189,9 @@
             </tr>
             <template  v-if="!findCharLoading">
           <tr v-for="index in equipSort" :key="index">
-            <td>
+            <td  style="white-space: nowrap;">
               <template v-if="equipSlot[index] != null" >
-                <v-avatar style="cursor: pointer" size="30px" tile @click="openInven(equipSlot[index][0].itemId)">
+                <v-avatar style="cursor: pointer" size="30px" tile @click="openDatabase(equipSlot[index][0].itemId)">
                   <img :src="equipSlot[index][0].image">
                 </v-avatar>
                 <span class="ml-2" :style="{color: getColor(equipSlot[index][0].quality)}">
@@ -198,7 +199,7 @@
                 </span>
               </template>
             </td>
-          
+
           </tr>
             </template>
 
@@ -206,45 +207,69 @@
         </template>
       </v-simple-table>
       <v-divider  v-if="selectedChar != null"/>
-      <v-simple-table style="background-color: #181a26"
-                      dark
-                      class="mt-5 pb-1" dense  v-if="selectedChar != null">
-        <template v-slot:default>
-          <thead>
-          <tr><td colspan="2">장착 스티그마</td>
-          </tr>
-          </thead>
-          <tbody>
-          <tr v-if="findCharLoading">
-            <td min-height="400px" class="text-center pa-10">
-              <v-progress-circular
-                  :size="70"
-                  :width="7"
-                  indeterminate
-              ></v-progress-circular>
-            </td>
-          </tr>
-          <template  v-if="!findCharLoading">
-            <tr v-for="(sti, index) in char.character_stigma" :key="index">
-              <td>
+
+      </v-col>
+        <v-col cols="12" sm="6" md="6" lg="4" xl="4"
+               offset-sm="6"
+               offset-md="6"
+               offset-lg="0"
+               offset-xl="0"
+
+        >
+        <v-simple-table style="background-color: #181a26"
+                        dark
+                        class=" pb-1" dense  v-if="selectedChar != null">
+          <template v-slot:default>
+            <thead>
+            <tr><td colspan="2">장착 스티그마</td>
+            </tr>
+            </thead>
+            <tbody>
+            <tr v-if="findCharLoading">
+              <td min-height="400px" class="text-center pa-10">
+                <v-progress-circular
+                    :size="70"
+                    :width="7"
+                    indeterminate
+                ></v-progress-circular>
+              </td>
+            </tr>
+            <template  v-if="!findCharLoading">
+              <tr v-for="(sti, index) in char.character_stigma" :key="index">
+                <td>
                   <v-avatar style="cursor: pointer" size="30px" tile
                             @click="openInven(sti.itemId)">
                     <img :src="sti.image">
                   </v-avatar>
                   <span class="ml-2" :style="{color: getColor(sti.quality)}">{{sti.name}}</span>
 
-              </td>
+                </td>
 
-            </tr>
+              </tr>
+            </template>
+
+            </tbody>
           </template>
-
-          </tbody>
-        </template>
-      </v-simple-table>
-      </v-col>
+        </v-simple-table>
+        </v-col>
       </v-row>
     </v-card-text>
   </v-card>
+    <v-dialog v-model="showTimeout" width="600">
+      <v-card>
+        <v-card-title>아이온 서버가 응답하지 않습니다.
+        <v-spacer></v-spacer>
+          <v-btn @click="showTimeout = false" icon><v-icon>mdi-close</v-icon></v-btn>
+        </v-card-title>
+        <v-card-text>홈페이지로 이동하시겠습니까?</v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn @click="findCharWindow" color="primary"><v-icon left>mdi-account-search</v-icon>검색으로 이동</v-btn>
+          <v-btn v-if="selectedChar && selectedChar.userid" @click="newWindow" color="primary"><v-icon left>mdi-account</v-icon>케릭터로 이동</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+  </div>
 </template>
 <script>
 import _ from 'lodash';
@@ -256,9 +281,8 @@ export default {
   mounted() {
     const server = localStorage.getItem("server");
     this.only50 = localStorage.getItem("only50") === 'true';
-    if(server){
-      this.selectedServer = server;
-    }
+    this.selectedServer = server;
+
         
 
 
@@ -295,13 +319,17 @@ export default {
       }
     },
     keyword(){
-      if(this.keyword != null && this.keyword !== ""){
+      if(this.selectedServer != null && this.keyword != null && this.keyword !== ""){
         this.search(this.keyword.replace(/[^a-zA-Zㄱ-힣]/gi, ""));
       }
     },
 
     selectedServer(){
-      localStorage.setItem("server", this.selectedServer);
+      if(this.selectedServer == null){
+        localStorage.removeItem('server')
+      }else{
+        localStorage.setItem("server", this.selectedServer);
+      }
     },
 
     selectedChar () {
@@ -345,6 +373,7 @@ export default {
       suggest: [],
       hour: 0,
       time: "",
+      showTimeout:false,
       selectedChar: null,
       suggestLoading: false,
       showServerError: false,
@@ -409,17 +438,33 @@ export default {
         this.showServerError = true;
         return;
       }
-      const response = await this.axios.get(`/api/character/${server}/${userid}`);
-      this.char = response.data;
-      this.findCharLoading = false;
 
-      // console.info(this.char)
-      // this.suggest = response.data;
+      try{
+        console.info(0)
+        const response = await this.axios.get(`/api/character/${server}/${userid}`);
+        console.info(1)
+        this.char = response.data;
+        this.findCharLoading = false;
+        console.info(4)
+      }catch (e) {
+        console.info(2)
+        if(e.response.status === 504){
+          console.info(3)
+          this.showTimeout = true;
+        }
+        this.findCharLoading = false;
+      }
+    },
+    findCharWindow(){
+      const id = this.getOriginServerId(this.selectedServer);
+      window.open(`https://aion.plaync.com/search/characters/name?classId=&pageNo=1&pageSize=20&query=${this.keyword}&raceId=&serverId=${id}&site=aion&sort=level&world=classic`);
+      this.showTimeout = false;
     },
     newWindow(){
       const {server, userid} = this.selectedChar;
       const id = this.getOriginServerId(server);
       window.open(`https://aion.plaync.com/characters/server/${id}/id/${userid}/home`);
+      this.showTimeout = false;
     },
     showLegion(){
       const {server, guildId} = this.selectedChar;
@@ -430,8 +475,11 @@ export default {
     getOriginServerId(name){
       return _.find(this.servers, n => n.type === name).id;
     },
-    openInven(id){
+    openDatabase(id){
       window.open(`http://aiondatabase.net/kr/item/${id}`);
+    },
+    openInven(id){
+      window.open(`http://aion.inven.co.kr/dataninfo2/item/detail.php?code=${id}`);
     },
     classType(){
       switch (this.selectedChar.className) {
