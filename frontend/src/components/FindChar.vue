@@ -66,14 +66,14 @@
           <v-btn text outlined class="mr-2 mt-1" @click="newWindow">
             <v-icon left>mdi-account</v-icon>
             #{{selectedChar.charname}}
-            #{{char.character_abyss.rankName}}
+            <template v-if="char != null">#{{char.character_abyss.rankName}}</template>
             #LV.{{selectedChar.level}}
             #{{selectedChar.serverName}}
             #{{selectedChar.className}}
 
           </v-btn>
           <v-btn v-if="selectedChar.guildId" text outlined class="mr-2 mt-1" @click="showLegion">
-            <v-icon>mdi-shield-star</v-icon>
+            <v-icon left>mdi-shield-half-full</v-icon>
             {{selectedChar.guildName}}
           </v-btn>
        
@@ -419,15 +419,20 @@ export default {
       const params = new URLSearchParams();
       params.append('keyword', keyword);
       params.append('server', this.selectedServer);
-      console.info(params)
-      const response = await this.axios.post(`/api/suggest`, params, {
-        cancelToken: this.cancelSource.token
-      });
-      if (response && response.data) {
-        this.suggest = response.data.filter(s => !this.only50 || s.level === 50);
-      }else{
-        this.suggest = [];
+      try{
+        const response = await this.axios.post(`/api/suggest`, params, {
+          timeout: 1000,
+          cancelToken: this.cancelSource.token
+        });
+        if (response && response.data) {
+          this.suggest = response.data.filter(s => !this.only50 || s.level === 50);
+        }else{
+          this.suggest = [];
+        }
+      }catch (e) {
+        this.showTimeout = true;
       }
+
       this.suggestLoading = false;
     },
     async findChar() {
@@ -440,18 +445,19 @@ export default {
       }
 
       try{
-        console.info(0)
-        const response = await this.axios.get(`/api/character/${server}/${userid}`);
-        console.info(1)
+        // const id = this.getOriginServerId(server);
+        // const response = await this.axios.get(`https://api-aion.plaync.com/game/v2/classic/merge/server/${id}/id/${userid}`);
+        const response = await this.axios.get(`/api/character/${server}/${userid}`, {
+          timeout: 1000
+        });
+
         this.char = response.data;
         this.findCharLoading = false;
-        console.info(4)
       }catch (e) {
-        console.info(2)
-        if(e.response.status === 504){
-          console.info(3)
-          this.showTimeout = true;
-        }
+        // if(e.response.status === 504){
+        //   this.showTimeout = true;
+        // }
+        this.showTimeout = true;
         this.findCharLoading = false;
       }
     },

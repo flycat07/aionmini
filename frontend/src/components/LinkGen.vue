@@ -81,7 +81,9 @@ export default {
     async search() {
       this.suggestLoading = true;
       this.cancelSource = this.$cencelToken.source();
-      await this.axios.get(`/api/items?keyword=${this.keyword || ''}`, {
+      const params = new URLSearchParams();
+      params.append('keyword', this.keyword);
+      await this.axios.post(`/api/items`, params, {
         cancelToken: this.cancelSource.token }).then((response) => {
         if (response) {
           if(response.data.length > 0){
@@ -95,7 +97,6 @@ export default {
     },
     addTagname(text){
       const keyword = this.keyword.split(" ").join("|");
-      console.info(keyword)
       return text.replace(new RegExp("("+keyword+")", "g"), "<strong>$1</strong>")
     },
     copyCode({id}){
@@ -111,7 +112,6 @@ export default {
       }
       const response = await this.axios.get(`/api/character/${server}/${userid}`);
       this.char = response.data;
-      console.info(this.char)
       // this.suggest = response.data;
     },
   }

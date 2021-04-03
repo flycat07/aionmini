@@ -21,15 +21,20 @@ public class JSONConnector {
             uri = String.format(uri, params);
         }
 
-        return Unirest.put(uri)
+        String accept = Unirest.put(uri)
                 .header("Accept", "application/json, text/javascript, */*; q=0.01")
                 .header("User-Agent", userAgent)
                 .header("Content-Type", "application/json")
                 .body("{\"keyList\":[\"character_stats\",\"character_equipments\",\"character_abyss\",\"character_stigma\"]}")
-                .socketTimeout(800)
+//                .socketTimeout(800)
                 .asString()
 //                .ifFailure(Error.class, r -> r.getBody().printStackTrace())
                 .getBody();
+
+        Unirest.shutDown();
+
+
+        return accept;
     }
 
     public JSONArray suggest(JSONConnections suggestChars, String keyword, Servers server) {

@@ -38,7 +38,7 @@
       </v-container>
     </v-main>
 
-    <v-bottom-navigation v-model="navi">
+    <v-bottom-navigation app v-model="navi">
       <v-btn value="findchar">
         <span>캐릭터 검색</span>
         <v-icon>mdi-human-greeting</v-icon>
