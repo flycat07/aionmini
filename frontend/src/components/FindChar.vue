@@ -59,14 +59,23 @@
 <v-divider class="my-1" v-if="selectedChar != null"></v-divider>
       <v-list-item-content class="justify-center" v-if="selectedChar != null && selectedChar.level">
         <div class="mx-auto text-center">
-          <v-avatar tile class="mr-2" size="100" >
-            <img :src="'https://profileimg.plaync.com/game_profile_images/aion/images?gameServerKey='+getOriginServerId(selectedChar.server)+'&charKey='+selectedChar.userid"
-            :alt="selectedChar.charname"/>
+
+          <template v-if="findCharLoading">
+            <v-progress-circular
+                :size="70"
+                :width="7"
+                indeterminate
+            ></v-progress-circular>
+          </template>
+          <template v-else>
+            <v-avatar tile class="mr-2" size="100" >
+              <img :src="'https://profileimg.plaync.com/game_profile_images/aion/images?gameServerKey='+getOriginServerId(selectedChar.server)+'&charKey='+selectedChar.userid"
+                   :alt="selectedChar.charname"/>
             </v-avatar>
           <v-btn text outlined class="mr-2 mt-1" @click="newWindow">
             <v-icon left>mdi-account</v-icon>
             #{{selectedChar.charname}}
-            <template v-if="char != null">#{{char.character_abyss.rankName}}</template>
+            <template v-if="char && char.character_abyss">#{{char.character_abyss.rankName}}</template>
             #LV.{{selectedChar.level}}
             #{{selectedChar.serverName}}
             #{{selectedChar.className}}
@@ -76,6 +85,7 @@
             <v-icon left>mdi-shield-half-full</v-icon>
             {{selectedChar.guildName}}
           </v-btn>
+          </template>
        
         </div>
       </v-list-item-content>
@@ -155,12 +165,12 @@
           <td class="text-right">{{totalAbyss.def | fix}}%</td>
         </tr>
 
-            <tr>
+            <tr v-if="!findCharLoading && char && char.character_abyss">
               <th class="text-left">킬 수</th>
               <td class="text-right" :class="{'red--text': (char.character_abyss || {}).totalKillCount > 10000}">{{ (char.character_abyss || {}).totalKillCount | fmt}}</td>
             </tr>
 
-            <tr v-if="!findCharLoading && char.character_abyss">
+            <tr v-if="!findCharLoading && char &&  char.character_abyss">
               <th class="text-left">어비스 포인트</th>
               <td class="text-right">{{char.character_abyss.abyssPoint | fmt}}</td>
             </tr>
@@ -430,7 +440,10 @@ export default {
           this.suggest = [];
         }
       }catch (e) {
-        this.showTimeout = true;
+        if(!e.__CANCEL__){
+          this.showTimeout = true;
+        }
+        // console.info('error', Object.keys(e), );
       }
 
       this.suggestLoading = false;
