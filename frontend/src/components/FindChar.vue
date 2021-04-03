@@ -442,6 +442,7 @@ export default {
       }catch (e) {
         if(!e.__CANCEL__){
           this.showTimeout = true;
+          this.char = {};
         }
         // console.info('error', Object.keys(e), );
       }
