@@ -55,7 +55,18 @@
         </v-col>
       </v-row>
 
-
+      <v-sheet v-if="showTimeout" outlined rounded>
+        <v-card-title>오류가 발생했거나 아이온 서버가 응답하지 않습니다.
+          <v-spacer></v-spacer>
+          <v-btn @click="showTimeout = false" icon><v-icon>mdi-close</v-icon></v-btn>
+        </v-card-title>
+        <v-card-text>홈페이지로 이동하시겠습니까?</v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn @click="findCharWindow" color="primary"><v-icon left>mdi-account-search</v-icon>검색으로 이동</v-btn>
+          <v-btn v-if="selectedChar && selectedChar.userid" @click="newWindow" color="primary"><v-icon left>mdi-account</v-icon>케릭터로 이동</v-btn>
+        </v-card-actions>
+      </v-sheet>
 <v-divider class="my-1" v-if="selectedChar != null"></v-divider>
       <v-list-item-content class="justify-center" v-if="selectedChar != null && selectedChar.level">
         <div class="mx-auto text-center">
@@ -265,20 +276,9 @@
       </v-row>
     </v-card-text>
   </v-card>
-    <v-dialog v-model="showTimeout" width="600">
-      <v-card>
-        <v-card-title>아이온 서버가 응답하지 않습니다.
-        <v-spacer></v-spacer>
-          <v-btn @click="showTimeout = false" icon><v-icon>mdi-close</v-icon></v-btn>
-        </v-card-title>
-        <v-card-text>홈페이지로 이동하시겠습니까?</v-card-text>
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn @click="findCharWindow" color="primary"><v-icon left>mdi-account-search</v-icon>검색으로 이동</v-btn>
-          <v-btn v-if="selectedChar && selectedChar.userid" @click="newWindow" color="primary"><v-icon left>mdi-account</v-icon>케릭터로 이동</v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
+<!--    <v-dialog v-model="showTimeout" width="600">-->
+
+<!--    </v-dialog>-->
   </div>
 </template>
 <script>
