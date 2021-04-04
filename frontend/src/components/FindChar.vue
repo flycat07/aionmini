@@ -63,6 +63,7 @@
         <v-card-text>홈페이지로 이동하시겠습니까?</v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
+          <v-btn @click="findChar" color="primary"><v-icon left>mdi-refresh</v-icon>재시도</v-btn>
           <v-btn @click="findCharWindow" color="primary"><v-icon left>mdi-account-search</v-icon>검색으로 이동</v-btn>
           <v-btn v-if="selectedChar && selectedChar.userid" @click="newWindow" color="primary"><v-icon left>mdi-account</v-icon>케릭터로 이동</v-btn>
         </v-card-actions>
@@ -101,7 +102,7 @@
         </div>
       </v-list-item-content>
        <v-divider class="my-1" v-if="selectedChar != null"></v-divider>
-      <v-row>
+      <v-row v-if="!showTimeout">
         <v-col cols="12" sm="6" md="6" lg="4" xl="4">
         <v-simple-table dense dark
                         class="pb-1"
@@ -344,6 +345,7 @@ export default {
 
     selectedChar () {
       if(this.selectedChar && this.selectedChar.userid){
+        this.showTimeout = false;
         this.addThisChar();
         this.findChar();
         this.loadHistory();
@@ -352,27 +354,6 @@ export default {
   },
   data () {
     return {
-      chartData: { // for 'data' prop of 'bar-chart'
-        categories: ['Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov'],
-        series: [
-          {
-            name: 'Budget',
-            data: [5000, 3000, 5000, 7000, 6000, 4000],
-          },
-          {
-            name: 'Income',
-            data: [8000, 4000, 7000, 2000, 6000, 3000],
-          },
-          {
-            name: 'Expenses',
-            data: [4000, 4000, 6000, 3000, 4000, 5000],
-          },
-          {
-            name: 'Debt',
-            data: [3000, 4000, 3000, 1000, 2000, 4000],
-          },
-        ],
-      },
       equipSort: [0,17,1,18,3,11,12,4,5,2,10,6,7,8,9,16,15],
       selectedServer: null,
       only50: false,
@@ -423,6 +404,7 @@ export default {
   methods: {
     async search(keyword) {
       this.cancelSource && this.cancelSource.cancel();
+      this.showTimeout = false;
       this.suggestLoading = true;
       this.showServerError = false;
       this.cancelSource = this.$cencelToken.source();
@@ -431,7 +413,7 @@ export default {
       params.append('server', this.selectedServer);
       try{
         const response = await this.axios.post(`/api/suggest`, params, {
-          timeout: 1000,
+          timeout: 2000,
           cancelToken: this.cancelSource.token
         });
         if (response && response.data) {
@@ -439,6 +421,7 @@ export default {
         }else{
           this.suggest = [];
         }
+        this.showTimeout = false;
       }catch (e) {
         if(!e.__CANCEL__){
           this.showTimeout = true;
@@ -462,11 +445,12 @@ export default {
         // const id = this.getOriginServerId(server);
         // const response = await this.axios.get(`https://api-aion.plaync.com/game/v2/classic/merge/server/${id}/id/${userid}`);
         const response = await this.axios.get(`/api/character/${server}/${userid}`, {
-          timeout: 1000
+          timeout: 2000
         });
 
         this.char = response.data;
         this.findCharLoading = false;
+        this.showTimeout = false;
       }catch (e) {
         // if(e.response.status === 504){
         //   this.showTimeout = true;
