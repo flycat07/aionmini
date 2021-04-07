@@ -2,14 +2,8 @@ package com.reikop.aionmini.common.controller;
 
 import com.reikop.aionmini.common.service.ItemService;
 import com.reikop.aionmini.middle.service.AionService;
-import com.reikop.aionmini.work.model.Item;
-import com.reikop.aionmini.work.model.Servers;
-import com.reikop.aionmini.work.model.Status;
-import com.reikop.aionmini.work.model.User;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import com.reikop.aionmini.work.model.*;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -47,6 +41,15 @@ public class DataController {
         status.setUserid(id);
         String userAgent = request.getHeader("User-Agent");
         return aionService.getStatus(userAgent, status);
+    }
+
+    @PatchMapping("/server/{id}")
+    private GuildServer addGuild(@PathVariable String id, String server){
+        return aionService.setGuildServer(id, Servers.valueOf(server));
+    }
+    @GetMapping("/server/{id}")
+    private GuildServer getGuild(@PathVariable String id){
+        return aionService.getGuildServer(id);
     }
 
 }

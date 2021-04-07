@@ -5,6 +5,7 @@ import com.reikop.aionmini.common.service.UserService;
 import com.reikop.aionmini.middle.service.AionService;
 import com.reikop.aionmini.work.JSONConnections;
 import com.reikop.aionmini.work.JSONConnector;
+import com.reikop.aionmini.work.model.GuildServer;
 import com.reikop.aionmini.work.model.Servers;
 import com.reikop.aionmini.work.model.Status;
 import com.reikop.aionmini.work.model.User;
@@ -69,5 +70,15 @@ public class AionServiceImpl implements AionService {
         status.setStatus(call);
         statusService.putData(status);
         return call;
+    }
+
+    @Override
+    public GuildServer setGuildServer(String guildId, Servers server) {
+        return statusService.mergeServer(guildId, server);
+    }
+
+    @Override
+    public GuildServer getGuildServer(String guildId) {
+        return statusService.getServer(guildId);
     }
 }

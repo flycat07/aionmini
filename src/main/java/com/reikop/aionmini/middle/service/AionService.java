@@ -1,5 +1,6 @@
 package com.reikop.aionmini.middle.service;
 
+import com.reikop.aionmini.work.model.GuildServer;
 import com.reikop.aionmini.work.model.Servers;
 import com.reikop.aionmini.work.model.Status;
 import com.reikop.aionmini.work.model.User;
@@ -11,5 +12,9 @@ public interface AionService {
     List<User> suggestCharNames(String keyword, Servers server);
 
     String getStatus(String userAgent, Status status);
+
+    GuildServer setGuildServer(String guildId, Servers server);
+
+    GuildServer getGuildServer(String guildId);
 
 }
