@@ -160,6 +160,10 @@
           <th class="text-left">마법적중</th>
           <td class="text-right" :class="{'red--text':totalStat.magicalAccuracy > 1700}">{{totalStat.magicalAccuracy | fmt}}</td>
         </tr>
+        <tr v-if="classType()==='M'">
+          <th class="text-left">마법치명타</th>
+          <td class="text-right" >{{totalStat.magicalCriticalRight | fmt}}</td>
+        </tr>
             <tr>
               <th class="text-left">물치저항</th>
               <td class="text-right">{{totalStat.phyCriticalReduceRate | fmt}}</td>

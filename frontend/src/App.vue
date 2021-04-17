@@ -15,7 +15,15 @@
       </div>
       <v-spacer></v-spacer>
 
-      <v-tooltip left>
+      <v-tooltip bottom>
+        <template v-slot:activator="{ on, attrs }">
+          <v-btn fab @click="openDiscord"
+                 dark v-bind="attrs" v-on="on" icon class="mr-2"><v-icon>mdi-discord</v-icon></v-btn>
+        </template>
+        <span>디스코드 검색 봇</span>
+      </v-tooltip>
+
+      <v-tooltip bottom>
         <template v-slot:activator="{ on, attrs }">
           <v-badge icon="mdi-crown" overlap>
           <v-btn @click="openGuestbook" icon class="mx-0" v-bind="attrs" v-on="on">
@@ -124,6 +132,9 @@ export default {
     },
     openAion(){
       window.open(`https://aion.plaync.com/`);
+    },
+    openDiscord(){
+      window.open(`https://discord.com/api/oauth2/authorize?client_id=828894960304128025&permissions=67584&scope=bot`);
     },
     openGuestbook(){
       window.open(`https://aion.plaync.com/characters/server/22/id/72701/board/guestbook`);
