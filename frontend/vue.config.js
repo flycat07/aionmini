@@ -6,6 +6,9 @@ module.exports = {
             }
         }
     },
+    publicPath: process.env.NODE_ENV === 'production'
+    ? '/aionmini/'
+    : '/',
     filenameHashing:false,
     transpileDependencies: [
       'vuetify', 'copy-text-to-clipboard'

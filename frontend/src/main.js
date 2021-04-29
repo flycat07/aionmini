@@ -6,6 +6,9 @@ import './plugins/axios'
 import App from './App.vue'
 import vuetify from './plugins/vuetify';
 import numeral from 'numeral';
+import axios from 'axios';
+
+axios.defaults.baseURL = process.env.NODE_ENV === 'production' ? 'http://reikop.com:8080' : '/';
 
 Vue.filter('fmt', (value) => isNaN(value) ? showNaN() : (numeral(value).format('0,0'))); // displaying other groupings/separators is possible, look at the docs
 // Vue.filter('ymd', (value) => moment(value).format('YYYYMM-DD')); // displaying other groupings/separators is possible, look at the docs
@@ -18,6 +21,7 @@ function showNaN(){
 }
 
 Vue.config.productionTip = false
+
 
 new Vue({
   vuetify,
