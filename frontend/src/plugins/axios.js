@@ -10,8 +10,11 @@ import axios from "axios";
 
 
 // const cancelTokenSource = this.axios.CancelToken.source();
+
 let config = {
-  baseURL: process.env.baseURL || process.env.apiUrl || "",
+  // baseURL: process.env.baseURL || process.env.apiUrl || "",
+  baseURL: process.env.NODE_ENV !== 'production' ? 'http://reikop.com:8080' : '/'
+  
   // timeout: 60 * 1000, // Timeout
   // withCredentials: true, // Check cross-site Access-Control
 };

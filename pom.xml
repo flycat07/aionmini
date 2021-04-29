@@ -132,7 +132,7 @@
                             <goal>npm</goal>
                         </goals>
                         <configuration>
-                            <arguments>run build</arguments>
+                            <arguments>run deploy</arguments>
                         </configuration>
                     </execution>
                 </executions>
