@@ -12,7 +12,7 @@ public class WebConfig implements WebMvcConfigurer {
         registry.addMapping("/**")
                 .allowedMethods("*")
                 .allowedHeaders("*")
-                .allowedOrigins("https://reikop.github.io","http://reikop.com:8080", "http://localhost:8080", "http://localhost:8081");
+                .allowedOrigins("https://reikop.github.io", "https://reikop.com:8081", "http://localhost:8080", "http://localhost:8081");
     }
 
 
