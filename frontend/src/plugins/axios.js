@@ -13,7 +13,7 @@ import axios from "axios";
 
 let config = {
   // baseURL: process.env.baseURL || process.env.apiUrl || "",
-  baseURL: process.env.NODE_ENV !== 'production' ? 'http://reikop.com:8080' : '/'
+  baseURL: process.env.NODE_ENV === 'production' ? 'http://reikop.com:8080' : '/'
   
   // timeout: 60 * 1000, // Timeout
   // withCredentials: true, // Check cross-site Access-Control
