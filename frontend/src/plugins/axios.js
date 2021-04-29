@@ -7,14 +7,14 @@ import axios from "axios";
 // axios.defaults.baseURL = process.env.baseURL || process.env.apiUrl || '';
 // axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
 // axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
-
+axios.defaults.headers.common['Access-Control-Allow-Origin'] = 'http://reikop.com:8080';
 
 // const cancelTokenSource = this.axios.CancelToken.source();
 
 let config = {
   // baseURL: process.env.baseURL || process.env.apiUrl || "",
-  baseURL: process.env.NODE_ENV === 'production' ? 'http://reikop.com:8080' : '/'
-  
+  baseURL: process.env.NODE_ENV === 'production' ? 'http://reikop.com:8080' : '/',
+  origin: 'http://reikop.com:8080',
   // timeout: 60 * 1000, // Timeout
   // withCredentials: true, // Check cross-site Access-Control
 };

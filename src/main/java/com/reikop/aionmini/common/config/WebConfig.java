@@ -11,6 +11,9 @@ public class WebConfig implements WebMvcConfigurer {
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
                 .allowedMethods("*")
-                .allowedOrigins("reikop.github.io","reikop.com:8080", "localhost:8080", "localhost:8081");
+                .allowedHeaders("*")
+                .allowedOrigins("https://reikop.github.io","http://reikop.com:8080", "http://localhost:8080", "http://localhost:8081");
     }
+
+
 }

@@ -10,11 +10,12 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font@latest/css/materialdesignicons.min.css">
   </head>
   <body>
-    <script>
-      if(!location.href.startsWith("https://reikop.github.io")){
+    <!-- <script>
+      var l = location.href;
+      if(!l.startsWith("https://reikop.github.io") && !l.startsWith('http://localhost')){
         location.href = "https://reikop.github.io/aionmini/"
       }
-    </script>
+    </script> -->
     <noscript>
       <strong>We're sorry but <%= htmlWebpackPlugin.options.title %> doesn't work properly without JavaScript enabled. Please enable it to continue.</strong>
     </noscript>
