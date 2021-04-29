@@ -6,6 +6,11 @@ import './plugins/axios'
 import App from './App.vue'
 import vuetify from './plugins/vuetify';
 import numeral from 'numeral';
+const isDevelopment = process.env.NODE_ENV !== 'production';
+
+if(!isDevelopment){
+  location.href="https://reikop.github.io/aionmini/"
+}
 
 
 Vue.filter('fmt', (value) => isNaN(value) ? showNaN() : (numeral(value).format('0,0'))); // displaying other groupings/separators is possible, look at the docs
@@ -14,7 +19,6 @@ Vue.filter('fix', (value) => isNaN(value) ? showNaN() : (value != null ? value.t
 Vue.filter('fix3', (value) => isNaN(value) ? showNaN() : (value != null ? value.toFixed(3) : 0)); 
 
 function showNaN(){
-  const isDevelopment = process.env.NODE_ENV !== 'production';
   return isDevelopment ? 'NaN' : 0;
 }
 
