@@ -8,11 +8,6 @@ import vuetify from './plugins/vuetify';
 import numeral from 'numeral';
 const isDevelopment = process.env.NODE_ENV !== 'production';
 
-if(!isDevelopment){
-  location.href="https://reikop.github.io/aionmini/"
-}
-
-
 Vue.filter('fmt', (value) => isNaN(value) ? showNaN() : (numeral(value).format('0,0'))); // displaying other groupings/separators is possible, look at the docs
 // Vue.filter('ymd', (value) => moment(value).format('YYYYMM-DD')); // displaying other groupings/separators is possible, look at the docs
 Vue.filter('fix', (value) => isNaN(value) ? showNaN() : (value != null ? value.toFixed(1) : 0)); // displaying other groupings/separators is possible, look at the docs
