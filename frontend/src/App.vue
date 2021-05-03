@@ -134,7 +134,8 @@ export default {
       window.open(`https://aion.plaync.com/`);
     },
     openDiscord(){
-      window.open(`https://discord.com/api/oauth2/authorize?client_id=828894960304128025&permissions=67584&scope=bot`);
+      // window.open(`https://discord.com/api/oauth2/authorize?client_id=828894960304128025&permissions=67584&scope=bot`);
+      window.open(`https://discord.gg/Yt4Rz5NPPX`);
     },
     openGuestbook(){
       window.open(`https://aion.plaync.com/characters/server/22/id/72701/board/guestbook`);
