@@ -8,9 +8,9 @@
           <v-btn class="mr-3" @click="clearHistory" x-small color="red" dark><v-icon left x-small>mdi-sticker-remove-outline</v-icon>전체 삭제</v-btn>
           <v-btn class="mr-1" @click="selectedChar = h" v-for="(h, index) in history" v-text="h.charname" :key="index" x-small outlined></v-btn>
         </v-col>
-        <v-col cols="12">
-          <v-checkbox v-model="only50" label="50미만 표시안함" hide-details class="ma-0"></v-checkbox>
-        </v-col>
+<!--        <v-col cols="12">-->
+<!--          <v-checkbox v-model="only50" label="50미만 표시안함" hide-details class="ma-0"></v-checkbox>-->
+<!--        </v-col>-->
         <v-col cols="6" md="4" lg="2">
           <v-select v-model="selectedServer" flat outlined
                     clearable
@@ -295,7 +295,7 @@ export default {
   },
   mounted() {
     const server = localStorage.getItem("server");
-    this.only50 = localStorage.getItem("only50") === 'true';
+    // this.only50 = localStorage.getItem("only50") === 'true';
     this.selectedServer = server;
 
         
@@ -448,31 +448,31 @@ export default {
       try{
         // const id = this.getOriginServerId(server);
         // const response = await this.axios.get(`https://api-aion.plaync.com/game/v2/classic/merge/server/${id}/id/${userid}`);
-        const response = await this.axios.get(`/api/character/${server}/${userid}`, {
-          timeout: 2000
-        });
-
+        const response = await this.axios.get(`/api/character/${server}/${userid}`);
         this.char = response.data;
         this.findCharLoading = false;
         this.showTimeout = false;
       }catch (e) {
+          console.info(e)
         // if(e.response.status === 504){
         //   this.showTimeout = true;
         // }
-        this.showTimeout = true;
-        this.findCharLoading = false;
+
       }
+        // this.showTimeout = true;
+
     },
     findCharWindow(){
       const id = this.getOriginServerId(this.selectedServer);
-      window.open(`https://aion.plaync.com/search/characters/name?classId=&pageNo=1&pageSize=20&query=${this.keyword}&raceId=&serverId=${id}&site=aion&sort=level&world=classic`);
-      this.showTimeout = false;
+      const nick = this.selectedChar && this.selectedChar.charname || this.keyword;
+      window.open(`https://aion.plaync.com/search/characters/name?classId=&pageNo=1&pageSize=20&query=${nick}&raceId=&serverId=${id}&site=aion&sort=level&world=classic`);
+      // this.showTimeout = false;
     },
     newWindow(){
       const {server, userid} = this.selectedChar;
       const id = this.getOriginServerId(server);
       window.open(`https://aion.plaync.com/characters/server/${id}/id/${userid}/home`);
-      this.showTimeout = false;
+      // this.showTimeout = false;
     },
     showLegion(){
       const {server, guildId} = this.selectedChar;
@@ -484,7 +484,8 @@ export default {
       return _.find(this.servers, n => n.type === name).id;
     },
     openDatabase(id){
-      window.open(`http://aiondatabase.net/kr/item/${id}`);
+      // window.open(`http://aiondatabase.net/kr/item/${id}`);
+      window.open(`https://aioncodex.com/krc/item/${id}/`);
     },
     openInven(id){
       window.open(`http://aion.inven.co.kr/dataninfo2/item/detail.php?code=${id}`);
@@ -524,8 +525,8 @@ export default {
       const {server, userid} = this.selectedChar;
       if(_.find(history, {server, userid}) == null){
         history.unshift(this.selectedChar);
-        if(history.length > 10){
-          history.length = 10;
+        if(history.length > 15){
+          history.length = 15;
         }
         localStorage.setItem("history",JSON.stringify(history));
       }

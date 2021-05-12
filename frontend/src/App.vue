@@ -20,7 +20,7 @@
           <v-btn fab @click="openDiscord"
                  dark v-bind="attrs" v-on="on" icon class="mr-2"><v-icon>mdi-discord</v-icon></v-btn>
         </template>
-        <span>디스코드 검색 봇</span>
+        <span>디스코드 참여하기</span>
       </v-tooltip>
 
       <v-tooltip bottom>
@@ -47,12 +47,12 @@
     </v-main>
 
     <v-bottom-navigation app v-model="navi">
-      <v-btn value="findchar">
+      <v-btn value="findchar" :dark="navi === 'findchar'">
         <span>캐릭터 검색</span>
         <v-icon>mdi-human-greeting</v-icon>
       </v-btn>
 
-      <v-btn value="link">
+      <v-btn value="link" :dark="navi === 'link'">
         <span>아이템 링크</span>
         <v-icon>mdi-link</v-icon>
       </v-btn>
