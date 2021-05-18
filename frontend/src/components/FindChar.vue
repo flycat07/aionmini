@@ -348,6 +348,7 @@ export default {
     },
 
     selectedChar () {
+      this.retry = 0;
       if(this.selectedChar && this.selectedChar.userid){
         this.showTimeout = false;
         this.addThisChar();
@@ -358,6 +359,7 @@ export default {
   },
   data () {
     return {
+      retry: 0,
       equipSort: [0,17,1,18,3,11,12,4,5,2,10,6,7,8,9,16,15],
       selectedServer: null,
       only50: false,
@@ -451,16 +453,22 @@ export default {
         const response = await this.axios.get(`/api/character/${server}/${userid}`, {
           timeout: 2000
         });
-
-        this.char = response.data;
+        this.char = response.data || {};
         this.findCharLoading = false;
         this.showTimeout = false;
+        this.retry = 0;
       }catch (e) {
+        if(this.retry++ < 2){
+          await this.findChar();
+        }else{
+          this.char = {};
+          this.showTimeout = true;
+          this.findCharLoading = false;
+        }
         // if(e.response.status === 504){
         //   this.showTimeout = true;
         // }
-        this.showTimeout = true;
-        this.findCharLoading = false;
+
       }
     },
     findCharWindow(){
