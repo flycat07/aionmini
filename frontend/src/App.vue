@@ -101,7 +101,7 @@ export default {
   },
   data () {
     return {
-      navi: 'piece',
+      navi: 'findchar',
       server: "",
       keyword: "",
       suggest: [],
