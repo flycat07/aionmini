@@ -26,7 +26,7 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public List<Item> findItem(String value) {
-        if(StringUtils.isEmpty(value)){
+        if(StringUtils.isEmpty(StringUtils.trim(value))){
             return Collections.emptyList();
         }
         String keyword = value.replaceAll("[^\uAC00-\uD7A3xfe0-9a-zA-Z\\s]", "");

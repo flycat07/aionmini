@@ -20,7 +20,7 @@
           <v-btn fab @click="openDiscord"
                  dark v-bind="attrs" v-on="on" icon class="mr-2"><v-icon>mdi-discord</v-icon></v-btn>
         </template>
-        <span>디스코드 검색 봇</span>
+        <span>디스코드 참여하기</span>
       </v-tooltip>
 
       <v-tooltip bottom>
@@ -48,12 +48,12 @@
     </v-main>
 
     <v-bottom-navigation app v-model="navi">
-      <v-btn value="findchar">
+      <v-btn value="findchar" :dark="navi === 'findchar'">
         <span>캐릭터 검색</span>
         <v-icon>mdi-human-greeting</v-icon>
       </v-btn>
 
-      <v-btn value="link">
+      <v-btn value="link" :dark="navi === 'link'">
         <span>아이템 링크</span>
         <v-icon>mdi-link</v-icon>
       </v-btn>
@@ -142,7 +142,8 @@ export default {
       window.open(`https://aion.plaync.com/`);
     },
     openDiscord(){
-      window.open(`https://discord.com/api/oauth2/authorize?client_id=828894960304128025&permissions=67584&scope=bot`);
+      // window.open(`https://discord.com/api/oauth2/authorize?client_id=828894960304128025&permissions=67584&scope=bot`);
+      window.open(`https://discord.gg/Yt4Rz5NPPX`);
     },
     openGuestbook(){
       window.open(`https://aion.plaync.com/characters/server/22/id/72701/board/guestbook`);
