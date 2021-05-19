@@ -42,6 +42,7 @@
         <v-row>
           <v-col cols="12" v-if="navi === 'findchar'"><find-char></find-char></v-col>
           <v-col cols="12" v-if="navi === 'link'"><link-gen></link-gen></v-col>
+          <v-col cols="12" v-if="navi === 'piece'"><piece></piece></v-col>
         </v-row>
       </v-container>
     </v-main>
@@ -57,6 +58,11 @@
         <v-icon>mdi-link</v-icon>
       </v-btn>
 
+      <v-btn value="piece">
+        <span>조각노트</span>
+        <v-icon>mdi-creation</v-icon>
+      </v-btn>
+
 <!--      <v-btn value="nearby">-->
 <!--        <span>레기온 문장 생성기</span>-->
 <!--        <v-icon>mdi-flag-checkered</v-icon>-->
@@ -69,12 +75,14 @@
 import AionWatch from "./plugins/aionwatch"
 import FindChar from "./components/FindChar"
 import LinkGen from "./components/LinkGen"
+import Piece from "./components/Piece"
 export default {
   name: 'App',
 
   components: {
     FindChar,
-    LinkGen
+    LinkGen,
+    Piece
   },
   //
   // data: () => ({
@@ -93,7 +101,7 @@ export default {
   },
   data () {
     return {
-      navi: 1,
+      navi: 'piece',
       server: "",
       keyword: "",
       suggest: [],
